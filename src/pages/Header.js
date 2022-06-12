@@ -2,6 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
+// font-awesome
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 // import { auth } from "../shared/firebase";
 // import { onAuthStateChanged, signOut } from 'firebase/auth';
 
@@ -29,18 +32,19 @@ const Header = () => {
     return (
         <HeaderContainer>
             <HomeBtn>
-                <button onClick={() => { navigate("/") }}>Home</button>
+                <FontAwesomeIcon icon="fa-house" size="2x" onClick={() => { navigate("/") }} />
             </HomeBtn>
-            <Title> My Magazine </Title>
+            <Title> 짤태식이 돌아왔구나 </Title>
             <AboutLogin>
                 {is_login ? (
-                    <button 
-                    // onClick={() => { signOut(auth) }}
-                    >로그아웃</button>
+                    <div>
+                    <FontAwesomeIcon icon="fa-door-open" size="2x"/>
+                    <FontAwesomeIcon icon="fa-door-closed" size="2x"/>
+                    </div>
                 ) : (
                     <div>
-                        <button style={{margin:"10px"}} onClick={() => { navigate("/login") }}>로그인하기</button>
-                        <button onClick={() => { navigate("/signup") }}>회원가입하기</button>
+                        <button style={{ margin: "10px" }} onClick={() => { navigate("/login") }} class="button is-info">로그인하기</button>
+                        <button onClick={() => { navigate("/signup") }} class="button is-info">회원가입하기</button>
                     </div>
                 )}
             </AboutLogin>
@@ -59,22 +63,21 @@ const HeaderContainer = styled.div`
       align-items: center;
       width: 100%;
       height: 100px;
-      background-color: #cfffaf;
+      background-color: #ececec;
       border-bottom: 2px solid blueviolet;
 `;
 
 const HomeBtn = styled.div`
 position: fixed;
-top: 40px;
-left: 20px;
+top: 30px;
+left: 40px;
 `;
 
 const Title = styled.h1`
-    color: slateblue;
+    color: deeppink;
     text-align: center;
     font-size: 50px;
-    font-weight: 600;
-    text-decoration: none;
+    font-family: 'Song Myung', serif;
 `;
 
 const AboutLogin = styled.div`

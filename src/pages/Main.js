@@ -1,15 +1,24 @@
 import React from "react";
 import styled from "styled-components";
-// import { useSelector} from "react-redux";
+import {
+    useSelector,
+    // useDispatch 
+} from "react-redux";
 import { useNavigate } from "react-router-dom";
+// import { deletepost } from "../redux/modules/post";
+
+// font-awesome
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
 
 
 const Main = () => {
 
-    // const post_lists = useSelector((state) => state.post.list);
+    const post_lists = useSelector((state) => state.post.list);
+    const tag_lists = useSelector((state) => state.post.tag);
     const navigate = useNavigate();
+    // const dispatch = useDispatch();
 
     //로그인이 되어 있는지 확인
     // const [is_login
@@ -27,100 +36,113 @@ const Main = () => {
     // React.useEffect(() => {
     //     onAuthStateChanged(auth, loginCheck);
     // })
+    const [tagvalue, setTag] = React.useState("")
+    const tag_ref = React.useRef(null);
 
+    function searchTag(tag, tag_list) {
+        for (let i = 0; i < tag_list.length; i++) {
+            console.log(i)
+            if (tag === tag_list[i]) {
+                console.log(tag)
+                return true;
+            }
+        }
+
+        if (tag === "") {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 
     return (
         <Page>
-            <ListStyle>
-                <h1>HI</h1>
-{/*                 
-                {post_lists.map((list, index) => {
+            <div>
+                <input type="text" ref={tag_ref} onChange={(e) => { setTag(e.target.value); }} placeholder="Tag를 입력하세요"
+                    style={{ width: "50vw" }}
+                />
+            </div>
+            <TagBox>
+                {tag_lists.map((tag, idx) => {
                     return (
-                        <CardStyle key={index}>
-                            <NameDateEDBtn>
-                                <h5 style={{ fontStyle: " italic" }}> {list.nick}님의 게시물 <br /> {list.upload_time}</h5>
-                                {user_check(index, user) ? (
-                                <EDBtn>
-                                    <button
-                                    onClick={() => {
-                                        navigate("/postedit/" + index);
-                                    }}
-                                    >수정하기</button>
-                                    <button
-                                    onClick={() => {
-                                        dispatch(deletePostFB(post_lists[index].id));
-                                        window.alert("삭제 완료");
-                                        navigate("/");
-                                    }}
-                                    >삭제하기</button>
-                                </EDBtn>
-                                ) : (null)
-                                }
-                            </NameDateEDBtn>
-                            {
-                                `${list.layer}` === "rightText"
-                                    ? (
-                                        <RowImgTxt
-                                            onClick={() => {
-                                                navigate("/postdetail/" + index);
-                                            }}
-                                        >
-                                            <RowImg src={list.image_url} alt="불러오기 실패" />
-                                            <Explanation> {list.explanation} </Explanation>
-                                        </RowImgTxt>)
-                                    : (null)
-                            }
-
-                            {
-                                `${list.layer}` === "leftText"
-                                    ? (
-                                        <RowImgTxt
-                                            onClick={() => {
-                                                navigate("/post/" + index);
-                                            }}
-                                        >
-                                            <Explanation> {list.explanation} </Explanation>
-                                            <RowImg src={list.image_url} alt="불러오기 실패" />
-                                        </RowImgTxt>)
-                                    : (null)
-                            }
-                            {
-                                `${list.layer}` === "downText"
-                                    ? (
-                                        <ColumnImgTxt
-                                            onClick={() => {
-                                                navigate("/post/" + index);
-                                            }}
-                                        >
-                                            <ColumnImg src={list.image_url} alt="불러오기 실패" />
-                                            <Explanation> {list.explanation} </Explanation>
-                                        </ColumnImgTxt>)
-                                    : (null)
-                            }
-                        </CardStyle>
+                        <button key={idx}
+                            onClick={() => { setTag(tag_lists[idx]) }}
+                        >
+                            {tag_lists[idx]}
+                        </button>
                     );
                 })}
-                 */}
-            </ListStyle>      {is_login ? (
-                <AddBtn onClick={() => {
-                    navigate("/posting");
-                }}
-                >+</AddBtn>
-            ) : (
-                (null)
-            )}
+            </TagBox>
+            <ListStyle>
+                {post_lists.map((list, index) => {
+                    return (
+                        <div key={index}>
+                            {searchTag(tagvalue, list.tag) ? (
+                                <CardStyle onClick={() => {
+                                    navigate("/post/" + list.postid);
+                                }}>
+                                    <NameDateEDBtn>
+                                        <h5 style={{ fontStyle: " italic" }}> {list.user_nick}님의 게시물 <br /> {list.time}</h5>
+                                        {is_login ? (
+                                            <EDBtn>
+                                                <button
+                                                    onClick={() => {
+                                                        navigate("/post/" + list.postid);
+                                                    }}
+                                                >수정하기</button>
+                                                <button
+                                                    onClick={() => {
+                                                        // dispatch(deletepost({index}));
+                                                        window.alert("삭제 완료");
+                                                    }}
+                                                >삭제하기</button>
+                                            </EDBtn>
+                                        ) : (null)
+                                        }
+                                    </NameDateEDBtn>
+                                    <Img> {list.img_url} </Img>
+                                    <div style={{ backgroundColor: "white", margin: "10px" }}>{list.title}</div>
+                                    <div style={{ display: "flex", flexDirection: "row", gap: "10px", justifyContent: "center" }}>
+                                        <FontAwesomeIcon icon="fa-heart" color="red" size="2x" />
+                                        <div>{list.liked}</div>
+                                        <FontAwesomeIcon icon="fa-message" size="2x" />
+                                        <div>{list.comment_cnt}</div>
+                                    </div>
+                                </CardStyle>
+                            ) : (null)}
+                        </div>
 
-        </Page>
+                    );
+                })}
+
+            </ListStyle>      {
+                is_login ? (
+
+                    <AddBtn onClick={() => {
+                        navigate("/posting");
+                    }}>
+                        <FontAwesomeIcon icon="fa-pen" color="gray" size="2x" />
+                    </AddBtn>
+                ) : (
+                    (null)
+                )
+            }
+        </Page >
     )
 }
 
 const Page = styled.div`
 width: 100vw;
-margin: 100px auto auto auto;
+margin-top: 100px;
+padding-top: 20px;
 `;
 
 const ListStyle = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
   overflow-x: hidden;
   overflow-y: scroll;
   ::-webkit-scrollbar {
@@ -128,72 +150,56 @@ const ListStyle = styled.div`
   }
 `;
 
+const TagBox = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 70vw;
+    margin: 10px auto;
+    gap: 10px;
+`;
+
+
+
 //
 
-// const CardStyle = styled.div`
-// align-items: center;
-// justify-content: center;
-// width: 50vw;
-// background-color: #cfffaf;
-// margin : 20px auto;
-// padding: 0px 20px 20px 20px;
-// border: 2px solid blueviolet;
-// border-radius: 10px;
-// transition: box-shadow 300ms ease-in-out;
-// &:hover {
-//   box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px 0px;
-// }
-// `;
+const CardStyle = styled.div`
+position: relative;
+align-items: center;
+justify-content: center;
+width: calc((100vw -40px)/ 4);
+background-color: #cfffaf;
+margin : 20px auto;
+padding: 0px 20px 20px 20px;
+border: 2px solid blueviolet;
+border-radius: 10px;
+transition: box-shadow 300ms ease-in-out;
+&:hover {
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px 0px;
+}
+`;
 
-// const NameDateEDBtn = styled.div`
-// display: flex;
-// flex-direction: row;
-// justify-content: center;
-// gap: 10px;
-// `;
+const NameDateEDBtn = styled.div`
+display: flex;
+flex-direction: row;
+justify-content: center;
+gap: 10px;
+`;
 
-// const EDBtn = styled.div`
-// display: flex;
-// flex-direction: row;
-// align-items: center;
-// gap: 10px;
-// `;
+const EDBtn = styled.div`
+display: flex;
+flex-direction: column;
+justify-content: center;
+gap: 5px;
+`;
 
-// const RowImgTxt = styled.div`
-// display: flex;
-// flex-direction: row;
-// justify-content: center;
-// gap: 5%;
-// margin: auto; 
-// `;
-
-// const ColumnImgTxt = styled.div`
-// display: flex;
-// flex-direction: column;
-// align-items: center;
-// gap: 5%;
-// margin: auto;
-// `
-
-// const RowImg = styled.img`
-// width: 20vw;
-// height: 20vh;
-// object-fit: cover; 
-// `;
-
-// const ColumnImg = styled.img`
-// width: 20vw;
-// height: 20vh;
-// object-fit: cover; 
-// margin-bottom: 5%;
-// `;
-
-// const Explanation = styled.div`
-// width: 20vw;
-// height: 20vh;
-// background-color: white;
-// line-height: 20vh;
-// `
+const Img = styled.div`
+width: 20vw;
+height: 20vh;
+background-color: white;
+line-height: 20vh;
+margin: auto;
+`
 
 //
 
@@ -202,20 +208,10 @@ const AddBtn = styled.div`
 position: fixed;
 bottom: 5vh;
 right: 5vw;
-width: 50px;
-height: 50px;
-border-radius: 50px;
-background-color: #673ab7;
-padding: 25px, 25px;
-color: white;
-line-height: 55%;
-text-align: center;
-font-size: 65px;
-font-weight: bold;
 
 transition: transform 300ms ease-in-out;
 &:hover {
-  transform: rotate(90deg);
+  transform: rotate(360deg);
 }
 `;
 

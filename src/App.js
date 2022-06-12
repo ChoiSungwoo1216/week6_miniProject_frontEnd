@@ -11,6 +11,13 @@ import Posting from "./pages/Posting"
 import Post from "./pages/Post"
 import PostEdit from "./pages/PostEdit"
 
+//font-awesome
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faDoorClosed, faDoorOpen, faPen, faHeart, faHouse, faMessage } from '@fortawesome/free-solid-svg-icons'
+library.add( faHouse, faDoorOpen, faDoorClosed, faHeart, faPen, faMessage );
+
+
+
 // index는 추후 post_id로 교체해서 사용할 예정
 function App() {
   return (
@@ -21,8 +28,8 @@ function App() {
         <Route path="/login" element={<Login />}></Route>
         <Route path="/signup" element={<SignUp />}></Route>
         <Route path="/posting" element={<Posting />}></Route>
-        <Route path="/post/:index" element={<Post />}></Route>
-        <Route path="/postedit/:index" element={<PostEdit />}></Route>
+        <Route path="/post/:postid" element={<Post />}></Route>
+        <Route path="/postedit/:postid" element={<PostEdit />}></Route>
       </Routes>
     </div>
   );
