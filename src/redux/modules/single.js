@@ -12,23 +12,43 @@ const initialState = {
     list: [
         {
             postid: "number1", img_url: "이미지1", tag: ["tag1", "tag2"], user_nick: "김성모", liked: "0", comment_cnt: "2", time: "2022-06-11 00:00", title: "제목 12",
-            comment_list: [{ comment: "댓글 1", time: "2022-06-12 18:33" }, { comment: "댓글 2", time: "2022-06-12 18:33" }]
+            comment_list: [{ comment: "댓글 1", time: "2022-06-12 18:33" }, { comment: "댓글 2", time: "2022-06-12 18:33" }], 
+            up_text_layer: "1",
+            up_text_value: "비로그인이",
+            down_text_layer: "2",
+            down_text_value: "로그인?!"
         },
         {
             postid: "number2", img_url: "이미지2", tag: ["tag2", "tag3"], user_nick: "김성모", liked: "1", comment_cnt: "3", time: "2022-06-11 00:01", title: "제목 23",
-            comment_list: [{ comment: "댓글 1", time: "2022-06-12 18:33" }, { comment: "댓글 2", time: "2022-06-12 18:33" }, { comment: "댓글 3", time: "2022-06-12 18:33" }]
+            comment_list: [{ comment: "댓글 1", time: "2022-06-12 18:33" }, { comment: "댓글 2", time: "2022-06-12 18:33" }, { comment: "댓글 3", time: "2022-06-12 18:33" }],
+            up_text_layer: "",
+            up_text_value: "",
+            down_text_layer: "2",
+            down_text_value: "로그인?!"
         },
         {
             postid: "number3", img_url: "이미지3", tag: ["tag3", "tag4"], user_nick: "김성모", liked: "2", comment_cnt: "3", time: "2022-06-11 00:02", title: "제목 34",
-            comment_list: [{ comment: "댓글 1", time: "2022-06-12 18:33" }, { comment: "댓글 2", time: "2022-06-12 18:33" }, { comment: "댓글 3", time: "2022-06-12 18:33" }]
+            comment_list: [{ comment: "댓글 1", time: "2022-06-12 18:33" }, { comment: "댓글 2", time: "2022-06-12 18:33" }, { comment: "댓글 3", time: "2022-06-12 18:33" }],
+            up_text_layer: "1",
+            up_text_value: "비로그인이",
+            down_text_layer: "",
+            down_text_value: ""
         },
         {
             postid: "number4", img_url: "이미지4", tag: ["tag4", "tag5"], user_nick: "김성모", liked: "3", comment_cnt: "3", time: "2022-06-11 00:03", title: "제목 45",
-            comment_list: [{ comment: "댓글 1", time: "2022-06-12 18:33" }, { comment: "댓글 2", time: "2022-06-12 18:33" }, { comment: "댓글 3", time: "2022-06-12 18:33" }]
+            comment_list: [{ comment: "댓글 1", time: "2022-06-12 18:33" }, { comment: "댓글 2", time: "2022-06-12 18:33" }, { comment: "댓글 3", time: "2022-06-12 18:33" }],
+            up_text_layer: "",
+            up_text_value: "",
+            down_text_layer: "",
+            down_text_value: ""
         },
         {
             postid: "number5", img_url: "이미지5", tag: ["tag5", "tag0"], user_nick: "김성모", liked: "4", comment_cnt: "3", time: "2022-06-11 00:04", title: "제목 50",
-            comment_list: [{ comment: "댓글 1", time: "2022-06-12 18:33" }, { comment: "댓글 2", time: "2022-06-12 18:33" }, { comment: "댓글 3", time: "2022-06-12 18:33" }]
+            comment_list: [{ comment: "댓글 1", time: "2022-06-12 18:33" }, { comment: "댓글 2", time: "2022-06-12 18:33" }, { comment: "댓글 3", time: "2022-06-12 18:33" }],
+            up_text_layer: "1",
+            up_text_value: "비로그인이",
+            down_text_layer: "2",
+            down_text_value: "로그인?!"
         },
     ],
 };

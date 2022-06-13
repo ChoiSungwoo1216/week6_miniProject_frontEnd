@@ -3,9 +3,9 @@ import React from "react";
 import styled from "styled-components";
 // import { useNavigate } from "react-router-dom";
 
-// import { storage } from "../shared/firebase";
+import { storage } from "../shared/firebase";
 // import { getAuth } from "firebase/auth";
-// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 // import { addPostFB } from "../redux/modules/post";
 
@@ -21,12 +21,21 @@ const Posting = () => {
     // const navigate = useNavigate();
     //작성이 되었는지 확인
     const [img_check, setImg] = React.useState(null);
-    const [exp_check, setExp] = React.useState("");
+    const [title_check, setTitle] = React.useState("");
+    const [tag_check, setTag] = React.useState("");
 
-    const explanation_ref = React.useRef(null);
+
+    const [up_txt, setUpTxt] = React.useState("")
+    const [down_txt, setDownTxt] = React.useState("")
+
+    const up_txt_ref = React.useRef(null);
+    const down_txt_ref = React.useRef(null);
+    const title_ref = React.useRef(null);
     const file_link_ref = React.useRef(null);
     const tag_ref = React.useRef(null);
 
+    let tags = [];
+    console.log(tags);
     //유저 정보 가져오기
     // const auth = getAuth();
     // const user = auth.currentUser;
@@ -37,10 +46,21 @@ const Posting = () => {
     // });
 
     // layer 선택
-    const [layer_value, setLayout] = React.useState("");
-    const is_checked = (e) => {
+    const [up_layer_value, setUpLayout] = React.useState("");
+    const up_is_checked = (e) => {
         if (e.target.checked) {
-            setLayout(e.target.value);
+            setUpLayout(e.target.value);
+        } else {
+            setUpLayout("");
+        }
+    };
+
+    const [down_layer_value, setDownLayout] = React.useState("");
+    const down_is_checked = (e) => {
+        if (e.target.checked) {
+            setDownLayout(e.target.value);
+        } else {
+            setDownLayout("");
         }
     };
 
@@ -49,19 +69,19 @@ const Posting = () => {
     let up_time = t_stamp.toDateString() + ", " + t_stamp.getHours() + ":" + t_stamp.getMinutes();
 
     //이미지 업로드
-    // const uploadFB = async (e) => {
+    const uploadFB = async (e) => {
 
-    //     const uploaded_file = await uploadBytes(
-    //         ref(storage, `images/${e.target.files[0].name}`),
-    //         e.target.files[0]
-    //     );
+        const uploaded_file = await uploadBytes(
+            ref(storage, `images/${e.target.files[0].name}`),
+            e.target.files[0]
+        );
 
 
-    //     const file_url = await getDownloadURL(uploaded_file.ref);
+        const file_url = await getDownloadURL(uploaded_file.ref);
 
-    //     file_link_ref.current = { url: file_url };
-    //     setImg(file_link_ref.current.url);
-    // };
+        file_link_ref.current = { url: file_url };
+        setImg(file_link_ref.current.url);
+    };
 
     //Post 추가
     // const addPostList = () => {
@@ -96,60 +116,102 @@ const Posting = () => {
     //     navigate("/");
     // };
 
+    // function cancleTag(value, tags){
+    //     for(let i = 0; i < tags.length; i++){
+    //         if(tags[i] === value){
+    //             tags.splice(i,1);
+    //             i--;
+    //         }
+    //     }
+    // }
+
+    // const addTag= (value)=>{
+    //     tags.push(value);
+    //     console.log(tags);
+    // }
+
     return (
         <PostingPage>
             <Subtitle>게시글 작성</Subtitle>
-            <CardStyle style={{ backgroundColor: "#cfffaf" }}>
+            <CardStyle>
                 <CardInside>
                     <ImgTxtDiv>
                         <ImgDiv>
-                            <h3>이미지 첨부</h3>
+                            <h3 style={{ margin: "0px" }}>이미지 첨부</h3>
                             <InputImg type="file"
-                            // onChange={uploadFB}
+                                onChange={uploadFB}
                             />
                         </ImgDiv>
                         <TxtDiv>
-                            <input type="text"
-                                ref={explanation_ref}
-                                onChange={(e) => {
-                                    setExp(e.target.value);
-                                }} />
-                            <img src={talking} />
-                            <InputTxt />
-                            <img src={talking} />
+                            {(up_layer_value ==="") ? (null):(
+                            <Ballon>{up_txt}</Ballon>
+                            )}
+                            <ImgInputed src={img_check} style={{ marign: "0px", padding: "0px" }} />
+                            {(down_layer_value ==="") ? (null):(
+                            <Ballon>{down_txt}</Ballon>
+                            )}
                         </TxtDiv>
                     </ImgTxtDiv>
                     <LayerDiv>
+
+                        <div>
+                            <h3>제목</h3>
+                            <input type="text"
+                                ref={title_ref}
+                                onChange={(e) => {
+                                    setTitle(e.target.value);
+                                }} />
+                        </div>
+                        {/* <div>
+                            {tags.map((list,idx)=>{
+                                return(
+                                <button>{tags[idx]}</button>)
+                            })
+                            }
+                        </div> */}
+                        <div>
+                            <h3>TAG</h3>
+                            <input type="text" ref={tag_ref} onChange={(e) => { setTag(e.target.value) }} />
+
+                        </div>
                         <h3>레이아웃 고르기</h3>
                         <div>
-                            <input type="checkbox" name="layer1" value="upText" onChange={is_checked} style={{ marginBottom: "10px" }} />왼쪽에 텍스트 오른쪽에 이미지<br />
-                            <RowLayer>
-                                <RowTxt>텍스트</RowTxt>
-                            </RowLayer>
+                            <input type="checkbox" name="1" value="upText" onChange={up_is_checked} style={{ marginBottom: "10px" }} />1번 텍스트<br />
+                            {/* <RowLayer> */}
+                                <input type="text" ref={up_txt_ref} onChange={(e) => { setUpTxt(e.target.value) }} />
+                            {/* </RowLayer> */}
                         </div>
                         <div>
-                            <input type="checkbox" name="layer2" value="downText" onChange={is_checked} style={{ marginBottom: "10px" }} />오른쪽에 텍스트 왼쪽에 이미지  <br />
-                            <RowLayer>
-                                <RowTxt>텍스트</RowTxt>
-                            </RowLayer>
+                            <input type="checkbox" name="2" value="downText" onChange={down_is_checked} style={{ marginBottom: "10px" }} />2번 텍스트  <br />
+                            {/* <RowLayer> */}
+                                <input type="text" ref={down_txt_ref} onChange={(e) => { setDownTxt(e.target.value) }} />
+                            {/* </RowLayer> */}
                         </div>
-
                     </LayerDiv>
                 </CardInside>
             </CardStyle>
             <AddWordBtn
-                // onClick={addPostList}
-                disabled={
-                    img_check === null || exp_check === "" || layer_value === ""
-                        ? true : false
-                }
+            // onClick={addPostList}
+            disabled={
+                img_check === null || title_check === ""
+                    ? true : false
+            }
             >작성 완료</AddWordBtn>
         </PostingPage>
     );
 };
 
+const Ballon = styled.div`
+background-image: url(${talking});
+width: 345px;
+height: 150px;
+line-height: 150px;
+font-size: 35px;
+font-weight: 600;
+`;
+
 const PostingPage = styled.div`
-margin-top: 120px;
+margin-top: 90px;
 `;
 
 const Subtitle = styled.h1`
@@ -165,8 +227,8 @@ const CardStyle = styled.div`
 display: flex;
 flex-direction: column;
 align-items: center;
-justify-content: center;
 margin: 10px auto auto auto;
+padding: 10px 10px;
 border: 20px solid lightskyblue;
 border-radius: 10px;
 width: 80vw;
@@ -187,12 +249,12 @@ const ImgTxtDiv = styled.div`
 display: flex;
 flex-direction: column;
 width: 50%;
-margin: 0px;
+margin: 0px auto;
 `;
 
 const ImgDiv = styled.div`
 height: 30%;
-margin: auto;
+margin: 10px auto;
 padding: 0;
 `;
 
@@ -200,17 +262,20 @@ const InputImg = styled.input`
 background-color: white;
 width: 300px;
 height: 24px;
+margin: 10px auto;
 `;
 
 const TxtDiv = styled.div`
-height: 70%;
-margin: 0;
+/* height: 70%; */
+display: flex;
+flex-direction: column;
+margin: 10px auto;
 `;
 
-const InputTxt = styled.div`
-width: 80%;
-height: 80%;
-text-align: center;
+const ImgInputed = styled.img`
+width: 339px;
+height: 345px;
+border: 3px solid white;
 background-color: white;
 `;
 

@@ -4,14 +4,19 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
+import talking from "../Img/talking.PNG"
+
+// import axios from "axios"
+
 // import { deletePostFB } from "../redux/modules/post";
 
 const Post = () => {
     //Post리스트와 이전에서 넘겨받은 index useParams로 바음
+    // const dispatch = useDispatch();
     const single_lists = useSelector((state) => state.single.list);
     const params = useParams();
     const navigate = useNavigate();
-    // const dispatch = useDispatch();
+
 
     const post_id = params.postid;
 
@@ -25,6 +30,31 @@ const Post = () => {
     const index = find_index(post_id);
 
     const [like, setLike] = React.useState(false);
+
+    //axios
+    // const addCommentList = async () => {
+
+    //     axios.post("http://localhost:5001/comment_list",
+    //         {
+    //             "post_id": "number1",
+    //             "comment": "댓글5",
+    //             "time": "2022-06-12 18:33"
+    //         },
+    //         {
+    //             headers: {
+    //                 'Content-type': 'application/json',
+    //                 'Accept': 'application/json'
+    //             }
+    //         }
+    //     )
+    //     .then(response => {
+    //         console.log(response); })
+    //         .catch((response)=>{console.log("Error!")});
+    // }
+
+    // React.useEffect(() => {
+    //     addCommentList();
+    // });
 
     //작성자와 유저가 동일한지 확인
     //   const auth = getAuth();
@@ -45,6 +75,8 @@ const Post = () => {
 
     return (
         <CardStyleD>
+            <PostTitle>{single_lists[index].title}</PostTitle>
+
             <InfoTitle>
                 <h5 style={{ fontStyle: " italic" }}>{single_lists[index].user_nick}님의 게시물 <br /> {single_lists[index].time}</h5>
                 {/* {user_check(index, user) ? ( */}
@@ -76,8 +108,17 @@ const Post = () => {
             <Rowlayer>
                 {/* <RowImg src={single_lists[index].img_url} alt="업로드 사진" /> */}
                 <div>
-                    <RowTxt> {single_lists[index].img_url} </RowTxt>
-                    <div>{single_lists[index].title}</div>
+                    <ImgTxtDiv>
+                        <TxtDiv>
+                            {(single_lists[index].up_text_layer === "") ? (null) : (
+                                <Ballon>{single_lists[index].up_text_value}</Ballon>
+                            )}
+                            <ImgInputed src={single_lists[index].img_url} style={{ marign: "0px", padding: "0px" }} />
+                            {(single_lists[index].down_text_layer === "") ? (null) : (
+                                <Ballon>{single_lists[index].down_text_value}</Ballon>
+                            )}
+                        </TxtDiv>
+                    </ImgTxtDiv>
 
                     {like ? (
                         <Like style={{ color: "red" }} onClick={() => { setLike(false) }}>
@@ -90,7 +131,7 @@ const Post = () => {
                     )
                     }
                 </div>
-                <div style={{ width: "30vw", height: "50vh" }}>
+                <div style={{ width: "30vw", height: "50vh", margin: "0px auto" }}>
                     {single_lists[index].comment_list.map((list, idx) => {
                         return (
                             <div style={{ border: "1px solid black", margin: "10px" }}>
@@ -100,6 +141,7 @@ const Post = () => {
                         );
                     })
                     }
+                    {/* <button onClick={addCommentList}>댓글 작성하기</button> */}
                 </div>
             </Rowlayer>
             {/* )
@@ -120,10 +162,51 @@ const Post = () => {
     );
 }
 
+const PostTitle = styled.div`
+background-color: transparent;
+margin: 10px auto;
+width: 80%;
+height: 50px;
+line-height: 50px;
+color: white;
+font-family: "Dokdo";
+font-size: 100px;
+`;
+
+const ImgInputed = styled.img`
+width: 339px;
+height: 345px;
+border: 3px solid white;
+background-color: white;
+`;
+
+const Ballon = styled.div`
+background-image: url(${talking});
+width: 345px;
+height: 150px;
+line-height: 150px;
+font-size: 35px;
+font-weight: 600;
+`;
+
+const ImgTxtDiv = styled.div`
+display: flex;
+flex-direction: column;
+width: 50%;
+margin: 0px auto;
+`;
+
+const TxtDiv = styled.div`
+/* height: 70%; */
+display: flex;
+flex-direction: column;
+margin: 10px auto;
+`;
+
 const CardStyleD = styled.div`
-margin: 200px auto 20px auto;
+margin: 100px auto 20px auto;
 width: 80vw;
-background-color: #cfffaf;
+background: rgba(0, 0, 0, 0.5);
 padding: 20px;
 border: 2px solid blueviolet;
 border-radius: 10px;
@@ -146,9 +229,10 @@ gap: 10px;
 const Rowlayer = styled.div`
 display: flex;
 flex-direction: row;
-justify-content: center;
-gap: 20px;
-margin: auto;
+width: 100%;
+gap: 10px;
+margin: 0px;
+padding: 0px;
 `;
 
 const RowImg = styled.img`

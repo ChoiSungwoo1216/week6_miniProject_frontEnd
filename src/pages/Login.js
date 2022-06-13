@@ -1,39 +1,64 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../shared/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth"
+// import { auth } from "../shared/firebase";
+// import { signInWithEmailAndPassword } from "firebase/auth"
+
+// import axios from "axios"
+import { login } from "../axios/login";
 
 const Login = () => {
 
     const navigate = useNavigate();
 
-    //작성 되었는지 확인
+    // //작성 되었는지 확인
     const [id_check, setId] = React.useState("");
     const [pwd_check, setPwd] = React.useState("");
 
-    //로그인 용
+    // //로그인 용
     const id_ref = React.useRef("");
     const password_ref = React.useRef("");
 
-    const loginFB = async () => {
-        //에러가 뜨면 catch가 불려온다.
-        try {
-            const user = await signInWithEmailAndPassword(
-                auth,
-                id_ref.current.value,
-                password_ref.current.value
-            );
-            console.log(user);
+    // const loginFB = async () => {
+    //     //에러가 뜨면 catch가 불려온다.
+    //     try {
+    //         const user = await signInWithEmailAndPassword(
+    //             auth,
+    //             id_ref.current.value,
+    //             password_ref.current.value
+    //         );
+    //         console.log(user);
 
-            if (user.operationType === "signIn") {
-                window.alert("환영합니다");
-                navigate("/");
-            }
-        } catch (e) {
-            window.alert("다시 시도해주세요");
-        }
-    }
+    //         if (user.operationType === "signIn") {
+    //             window.alert("환영합니다");
+    //             navigate("/");
+    //         }
+    //     } catch (e) {
+    //         window.alert("다시 시도해주세요");
+    //     }
+    // }
+
+    //axios
+const loginAxios = 
+// async 
+() => {
+    login(id_check, pwd_check);
+    // axios.post("http://localhost:5001/comment_list",
+    //     {
+    //         "email": id_check,
+    //         "password": pwd_check
+    //     },
+    //     {
+    //         headers: {
+    //             'Content-type': 'application/json',
+    //             'Accept': 'application/json'
+    //         }
+    //     }
+    // )
+    // .then(response => {
+    //     console.log(response); })
+    //     .catch((response)=>{console.log("Error!")});
+}
 
 
     return (
@@ -57,7 +82,7 @@ const Login = () => {
                     />
                 </Input>
                 <LoginBtn disabled={id_check === "" || pwd_check === ""
-                    ? true : false} onClick={loginFB}>로그인하기</LoginBtn>
+                    ? true : false} onClick={loginAxios}>로그인하기</LoginBtn>
             </CardStyle>
         </WordDiv>
     );
