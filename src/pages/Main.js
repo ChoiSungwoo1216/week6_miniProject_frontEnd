@@ -5,7 +5,6 @@ import {
     // useDispatch 
 } from "react-redux";
 import { useNavigate } from "react-router-dom";
-// import { deletepost } from "../redux/modules/post";
 
 //axios
 import axios from "axios";
@@ -17,17 +16,31 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
 const Main = () => {
-
-    const post_lists = useSelector((state) => state.post.list);
-    const tag_lists = useSelector((state) => state.post.tag);
+    //Hook
     const navigate = useNavigate();
     // const dispatch = useDispatch();
 
-    //로그인이 되어 있는지 확인
-    // const [is_login
-    //     , setIsLogin
-    // ] = React.useState(true);
+    //리덕스 연습
+    const post_lists = useSelector((state) => state.post.list);
+    const tag_lists = useSelector((state) => state.post.tag);
+
+    // Post 전체 목록
+    const [post_list, setList] = React.useState([]);
+
+    //Tag 목록
+    const [lists, setLists] = React.useState(post_lists);
+
+    //Tag 창 
+    const [open, setOpen] = React.useState(false);
+
+    // 로컬스토리지
+    // const user = localStorage.getItem("user")
+
+
+    //로그인 확인
     const is_login = true;
+    // const [is_login, setIsLogin] = React.useState(false);
+
     // const loginCheck = async (user) => {
     //     if (user) {
     //         setIsLogin(true);
@@ -36,102 +49,88 @@ const Main = () => {
     //     }
     // }
 
-    // React.useEffect(() => {
-    //     onAuthStateChanged(auth, loginCheck);
-    // })
-    const [tagvalue, setTag] = React.useState("")
+    React.useEffect(() => {
+        // loginCheck(user);
+        LoadPostAxios();
+    })
 
-    function searchTag(tag, tag_list) {
-        for (let i = 0; i < tag_list.length; i++) {
+    //Tag 검색
+    // const [tagvalue, setTag] = React.useState("")
 
-            if (tag === tag_list[i]) {
-
-                return true;
-            }
-        }
-
-        if (tag === "") {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-
-    //axios
-    // const loadPostList = async () => {
-    //     axios({
-    //         method: "get",
-    //         url: "http://localhost:5001/post_list"
-
-    //     }).then(response => {
-    //         console.log(response);
-    //     });
-
-
-    // }
-    // const loadCommentList = async () => {
-    //     axios.get("http://localhost:5001/comment_list").then(respose => {
-    //         console.log(respose);
-    //     });
-    // }
-
-    // const addCommentList = async () => {
-
-    //     axios.post("http://localhost:5001/comment_list",
-    //         {
-    //             "post_id": "number1",
-    //             "comment": "댓글4",
-    //             "time": "2022-06-12 18:33"
-    //         },
-    //         {
-    //             headers: {
-    //                 'Content-type': 'application/json',
-    //                 'Accept': 'application/json'
-    //             }
+    // function searchTag(tag, tag_list) {
+    //     for (let i = 0; i < tag_list.length; i++) {
+    //         if (tag === tag_list[i]) {
+    //             return true;
     //         }
-    //     )
-    //     .then(response => {
-    //         console.log(response); })
-    //         .catch((response)=>{console.log("Error!")});
+    //     }
+    //     if (tag === "") {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
     // }
 
     // React.useEffect(() => {
     //     loadPostList();
     //     loadCommentList();
     // });
-    const [search, setSearch] = React.useState("");
-    const [lists, setLists] = React.useState(post_lists);
-    const [open, setOpen] = React.useState(false);
 
-    const onSearch = (e) => {
+
+    //axios
+    const LoadPostAxios = async () => {
+        axios.defaults.withCredentials = true;
+        axios(
+            {
+                url: "/user/login",
+                method: "get",
+                baseURL: "http://52.78.217.50:8080",
+            }
+        )
+            .then(response => {
+                console.log(response);
+                // setList(response.data);
+            })
+            .catch((response) => { window.alert(response.response.data) });
+    }
+ 
+ 
+    //Tag 요청
+    const [tlist, setTlist] = React.useState([]);
+    const ByTag = (e) => {
         e.preventDefault();
-        if (search === null || search === "") {
-            // axios.get("url")
-            // .then((response)=>{
-            //     setLists(response.data.post)
-            // })
-            setLists(post_lists);
+        if (tlist === null || tlist === []) {
+            setTlist(post_list);
         } else {
-            const filterData = lists.filter((lists) => lists.tag.includes(search))
-            setLists(filterData);
+            axios.defaults.withCredentials = true;
+            axios(
+                {
+                    url: "/user/login",
+                    method: "post",
+                    data: {
+                        "tag": e,
+                    },
+                    baseURL: "http://52.78.217.50:8080",
+                }
+            )
+                .then(response => {
+                    console.log(response);
+                    // setTlist(response.data);
+                })
+                .catch((response) => { window.alert(response.response.data) });
         }
-        setSearch("");
     }
-    const onChangeSearch = (e) => {
-        e.preventDefault();
-        setSearch(e.target.value);
-    }
+
+
+
 
     return (
         <Page>
-            <FontAwesomeIcon icon="fa-magnifying-glass" size="2x" style={{ position: "fixed", top: "20px", left: "120px", zIndex: "10", color: "black" }} 
-            onClick={()=>{setOpen(true)}}
+            <FontAwesomeIcon icon="fa-tags" size="2x" style={{ position: "fixed", top: "20px", left: "120px", zIndex: "10", color: "black" }}
+                onClick={() => { setOpen(true) }}
             />
-            {open?(
-            <SearchDiv>
-                <SearchForm onSubmit={e => onSearch(e)}>
+            {open ? (
+                <TagsDiv>
+                    {/* <SearchForm onSubmit={e => onSearch(e)}>
                     <TagSearch
                         type="text"
                         value={search}
@@ -139,81 +138,70 @@ const Main = () => {
                         onChange={onChangeSearch}
                     />
                     <SearchBtn type="submit">검색</SearchBtn >
-                    <FontAwesomeIcon icon="fa-circle-xmark" style={{marginLeft: "21%"}}
-                    onClick={()=>{setOpen(false)}}
-                    />
-                </SearchForm>
-                <TagBox>
-                    {tag_lists.map((tags, idx) => {
-                        return (
-                            <TagBtn key={idx}
-                                // onClick={() => { setLists(lists.filter((lists)=>lists.tag.includes(tag_lists[idx]))) }}
-                            >
-                                {tag_lists[idx]}
-                            </TagBtn>
-                        );
-                    })}
-                </TagBox>
-            </SearchDiv>    
-            ):(null)}      
+
+                    </SearchForm> */}
+                    <TagBox>
+                        {tag_lists.map((tags, idx) => {
+                            return (
+                                <TagBtn key={idx}
+                                    // onClick={ByTag(tag_lists[idx])}
+                                >
+                                    {tag_lists[idx]}
+                                </TagBtn>
+                            );
+                        })}
+                    </TagBox>
+                    <div style={{ marginRight: "10px" }}>
+                        <FontAwesomeIcon icon="fa-circle-xmark" style={{ marginTop: "13px" }}
+                            onClick={() => { setOpen(false) }}
+                        /><br/><br/>
+                        <FontAwesomeIcon icon="fa-arrow-rotate-left"
+                            // onClick={() => { setTlist(post_list) }}
+                        />
+                    </div>
+                </TagsDiv>
+            ) : (null)}
             <ListStyle>
                 {lists.map((list, index) => {
                     return (
                         <div key={index}>
 
-                                <CardStyle >
-                                    <ImgDiv
-                                        onClick={() => {
-                                            navigate("/post/" + list.postid);
-                                        }}
-                                    >
-                                        <Img src={list.img_url} alt={list.img_url} />
-                                    </ImgDiv>
-                                    <CardTitle>{list.title}</CardTitle>
-                                    <CardInfo >
-                                        <FontAwesomeIcon icon="fa-heart" color="red" size="2x" />
-                                        <Cnt>{list.liked}</Cnt>
-                                        <h5 style={{ fontStyle: " italic", color: "white" }}> {list.user_nick}님의 게시물 <br /> {list.time}</h5>
-
+                            <CardStyle >
+                                <ImgDiv
+                                    onClick={() => {
+                                        navigate("/post/" + list.postid);
+                                    }}
+                                >
+                                    <Img src={list.img_url} alt={list.img_url} />
+                                </ImgDiv>
+                                <CardTitle>{list.title}</CardTitle>
+                                <CardInfo >
+                                    {/* <FontAwesomeIcon icon="fa-heart" color="red" size="2x" />
+                                    <Cnt>{list.liked}</Cnt> */}
+                                    <h5 style={{ fontStyle: " italic", color: "white" }}> {list.user_nick}님의 게시물 <br /> {list.time}</h5>
+                                    <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
                                         <FontAwesomeIcon icon="fa-comment-dots" color="white" size="2x" />
                                         <Cnt>{list.comment_cnt}</Cnt>
-                                    </CardInfo>
-                                    <ExtraDiv>
-                                        <TagDiv>
-                                            {list.tag.map((t, i) => {
-                                                return (
-                                                    <SmallTag key={i}>{list.tag[i]}</SmallTag>
-                                                );
-                                            })}
-                                        </TagDiv>
-                                        {is_login ? (
-                                            <EDBtn>
-                                                <FontAwesomeIcon icon="fa-pen-to-square" color="white"
-                                                    onClick={() => {
-                                                        navigate("/postedit/" + list.postid);
-                                                    }}
-                                                />
-                                                <FontAwesomeIcon icon="fa-trash-can" color="white"
-                                                    onClick={() => {
-                                                        // dispatch(deletepost({index}));
-                                                        window.alert("삭제 완료");
-                                                    }}
-                                                />
-                                            </EDBtn>
-                                        ) : (null)
-                                        }
-                                    </ExtraDiv>
-                                </CardStyle>
+                                    </div>
+                                </CardInfo>
+                                <TagDiv>
+                                    {list.tag.map((t, i) => {
+                                        return (
+                                            <SmallTag key={i}>{list.tag[i]}</SmallTag>
+                                        );
+                                    })}
+                                </TagDiv>
+                            </CardStyle>
                         </div>
-
                     );
                 })}
             </ListStyle>      {
                 is_login ? (
-
-                    <AddBtn onClick={() => {
-                        navigate("/posting");
-                    }}>
+                    <AddBtn
+                        onClick={() => {
+                            navigate("/posting");
+                        }}
+                    >
                         <FontAwesomeIcon icon="fa-pen" color="lightgray" size="2x" />
                     </AddBtn>
                 ) : (
@@ -247,7 +235,7 @@ const TagBox = styled.div`
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    max-width: 70vw;
+    max-width: 60vw;
     margin: 10px auto;
     gap: 10px;
 `;
@@ -255,7 +243,9 @@ const TagBox = styled.div`
 
 
 //
-const SearchDiv = styled.div`
+const TagsDiv = styled.div`
+display: flex;
+flex-direction: row;
 background-color: #e3e3e3;
 margin: 0px auto;
 border: 1px solid white;
@@ -263,21 +253,21 @@ border-radius: 10px;
 width: 80vw;
 `;
 
-const SearchForm = styled.form`
-display: flex;
-flex-direction: row;
-margin: 10px auto;
-`;
+// const SearchForm = styled.form`
+// display: flex;
+// flex-direction: row;
+// margin: 10px auto;
+// `;
 
-const SearchBtn = styled.button`
-margin-left: 10px;
-background-color: white;
-border-radius: 3px;
-border: 1px solid black;
-color: black;
-padding: 0.25em 0.55em;
-font-size: 16px;
-`;
+// const SearchBtn = styled.button`
+// margin-left: 10px;
+// background-color: white;
+// border-radius: 3px;
+// border: 1px solid black;
+// color: black;
+// padding: 0.25em 0.55em;
+// font-size: 16px;
+// `;
 
 const CardStyle = styled.div`
 position: relative;
@@ -296,13 +286,13 @@ transition: box-shadow 300ms ease-in-out;
 }
 `;
 
-const TagSearch = styled.input`
-text-align: center;
-width: 30vw;
-height: 25px;
-margin-left: 30%;
-border: 1px solid black;
-`;
+// const TagSearch = styled.input`
+// text-align: center;
+// width: 30vw;
+// height: 25px;
+// margin-left: 30%;
+// border: 1px solid black;
+// `;
 
 const TagBtn = styled.button`
 background: white;
@@ -311,21 +301,22 @@ border: 1px solid black;
 color: black;
 padding: 0.25em 0.55em;
 font-size: 15px;
+font-weight: 600;
 font-family: 'Gothic A1', sans-serif;
+width: 100px;
 `;
 
-const ExtraDiv = styled.div`
-display: flex;
-flex-direction: row;
-`;
+// const ExtraDiv = styled.div`
+// display: flex;
+// flex-direction: row;
+// `;
 
-const EDBtn = styled.div`
-align-items: center;
-display: flex;
-flex-direction: row;
-gap: 15px;
-margin-left: calc(100% - 170px);
-`;
+// const EDBtn = styled.div`
+// align-items: center;
+// display: flex;
+// flex-direction: row;
+// gap: 15px;
+// `;
 
 const Img = styled.img`
 width: 100%;
@@ -351,13 +342,12 @@ line-height: 32px;
 color: white;
 font-family: "Dokdo";
 font-size: 32px;
-border:1px solid white;
 `;
 
 const CardInfo = styled.div`
 display: flex;
 flex-direction: row;
-gap: 20px;
+gap: 40px;
 align-items: center;
 justify-content: center;
 margin: 10px auto;
@@ -372,16 +362,22 @@ const Cnt = styled.div`
 
 const TagDiv = styled.div`
 display:flex;
-flex-direction: row;
+flex-wrap: wrap;
 gap:10px;
-margin: 10px;
+margin:0px auto;
+align-items: center;
+justify-content: center;
 `;
 
 const SmallTag = styled.div`
-padding: 3px;
 background-color: orange;
 border: 1px solid black;
-border-radius: 3px;
+border-radius: 5px;
+width: 119.3px;
+height: 30px;
+line-height: 30px;
+font-size: 20px;
+font-weight: 600;
 `;
 //
 
@@ -398,3 +394,48 @@ transition: transform 300ms ease-in-out;
 `;
 
 export default Main;
+
+
+
+    //검색 기능
+    // const [search, setSearch] = React.useState("");
+    // const onSearch = (e) => {
+    //     e.preventDefault();
+    //     if (search === null || search === "") {
+    //         // axios.get("url")
+    //         // .then((response)=>{
+    //         //     setLists(response.data.post)
+    //         // })
+    //         setLists(post_lists);
+    //     } else {
+    //         const filterData = lists.filter((lists) => lists.tag.includes(search))
+    //         setLists(filterData);
+    //     }
+    //     setSearch("");
+    // }
+    // const onChangeSearch = (e) => {
+    //     e.preventDefault();
+    //     setSearch(e.target.value);
+    // }
+
+
+
+
+       // const addCommentList = async () => {
+    //     axios.post("http://localhost:5001/comment_list",
+    //         {
+    //             "post_id": "number1",
+    //             "comment": "댓글4",
+    //             "time": "2022-06-12 18:33"
+    //         },
+    //         {
+    //             headers: {
+    //                 'Content-type': 'application/json',
+    //                 'Accept': 'application/json'
+    //             }
+    //         }
+    //     )
+    //     .then(response => {
+    //         console.log(response); })
+    //         .catch((response)=>{console.log("Error!")});
+    // }

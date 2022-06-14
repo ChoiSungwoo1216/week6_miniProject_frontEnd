@@ -11,12 +11,20 @@ import Posting from "./pages/Posting"
 import Post from "./pages/Post"
 import PostEdit from "./pages/PostEdit"
 
+//AXIOS
+// import { LoadPostAxios } from './redux/modules/post';
+
 //font-awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faPen, faHeart, faHouse, faPenToSquare, faTrashCan, faCommentDots, faArrowRotateLeft, faMagnifyingGlass, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
-library.add(faHouse, faHeart, faPen, faPenToSquare, faTrashCan, faCommentDots, faArrowRotateLeft, faMagnifyingGlass, faCircleXmark);
+import { faPen, faHeart, faHouse, faPenToSquare, faTrashCan, faCommentDots, faArrowRotateLeft, faCircleXmark, faTags, faCommentMedical, faCircleCheck } from '@fortawesome/free-solid-svg-icons'
+library.add(faHouse, faHeart, faPen, faPenToSquare, faTrashCan, faCommentDots, faArrowRotateLeft, faTags, faCircleXmark, faCommentMedical, faCircleCheck);
 
 
+
+//불러오기
+// React.useEffect=()=>{
+//   LoadPostAxios();
+// }
 
 // index는 추후 post_id로 교체해서 사용할 예정
 function App() {

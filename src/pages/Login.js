@@ -56,6 +56,8 @@ const Login = () => {
             .then(response => {
                 let jwtToken = response.headers.get("authorization");
                 let rfToken = response.headers.get("refreshToken")
+                // let user = response.body.get("data");
+                // localStorage.setItem("user", user);
                 localStorage.setItem("Authorization", jwtToken);
                 localStorage.setItem("RefreshToken", rfToken);
                 console.log(response);

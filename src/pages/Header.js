@@ -13,6 +13,7 @@ import gunma from "../Img/gunma.PNG"
 const Header = () => {
     const navigate = useNavigate();
 
+    const user = localStorage.getItem("user");
     // const getUserInfo =() =>{
     //     return axios.get("url" + "user", {headers: authHeader() });
     // };
@@ -20,17 +21,25 @@ const Header = () => {
     //     return axios.get("url" + "admin", {headers: authHeader() });
     // };
     //로그인 확인
-    const [is_login
-        // , setIsLogin
-    ] = React.useState(false);
+    const [is_login, setIsLogin] = React.useState(false);
 
-    // const loginCheck = async (user) => {
-    //     if (user) {
-    //         setIsLogin(true);
-    //     } else {
-    //         setIsLogin(false);
-    //     }
-    // }
+    const loginCheck = async (user) => {
+        if (user) {
+            setIsLogin(true);
+        } else {
+            setIsLogin(false);
+        }
+    }
+
+    React.useEffect(() => {
+        loginCheck(user);
+    })
+
+    const logout = () => {
+        localStorage.removeItem("Authorization");
+        localStorage.removeItem("RefreshToken");
+        localStorage.removeItem("user");
+    }
 
     return (
         <HeaderContainer>
@@ -43,7 +52,7 @@ const Header = () => {
             <AboutLogin>
                 {is_login ? (
                     <div>
-                    {/* <Btn onClick={logout()}/> */}
+                    <Btn onClick={logout()}/>
                     </div>
                 ) : (
                     <div>

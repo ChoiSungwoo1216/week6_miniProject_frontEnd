@@ -1,8 +1,9 @@
-// // info.js
-// import { db } from "../../shared/firebase";
-// import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy} from "firebase/firestore";
-
+// post.js
+//AXIOS
+import axios from "axios";
 // Actions
+
+
 const LOAD = "post/LOAD";
 const ADD = "post/ADD";
 const EDIT = "post/EDIT";
@@ -10,13 +11,13 @@ const DELETE = "post/DELETE";
 
 const initialState = {
   list: [
-    {postid: "number1", img_url: "이미지1", tag: ["tag1", "tag2"], user_nick: "김성모", liked: "0", comment_cnt:"3", time: "2022-06-11 00:00", title: "제목 12"},
-    {postid: "number2", img_url: "이미지2", tag: ["tag2", "tag3"], user_nick: "김성모", liked: "1", comment_cnt:"4", time: "2022-06-11 00:01", title: "제목 23"},
-    {postid: "number3", img_url: "이미지3", tag: ["tag3", "tag4"], user_nick: "김성모", liked: "2", comment_cnt:"5", time: "2022-06-11 00:02", title: "제목 34"},
-    {postid: "number4", img_url: "이미지4", tag: ["tag4", "tag5"], user_nick: "김성모", liked: "3", comment_cnt:"6", time: "2022-06-11 00:03", title: "제목 45"},
-    {postid: "number5", img_url: "이미지5", tag: ["tag5", "tag0"], user_nick: "김성모", liked: "4", comment_cnt:"7", time: "2022-06-11 00:04", title: "제목 50"},
+    { postid: "number1", img_url: "이미지1", tag: ["대머리", "럭키짱", "아무거나", "내맘대로", "이런태그", "달고있는", "나는정말", "이게먼지", "모르겠다"], user_nick: "김성모", comment_cnt: "3", time: "2022-06-11 00:00", title: "제목 12" },
+    { postid: "number2", img_url: "이미지2", tag: ["아무거나", "내맘대로"], user_nick: "김성모", comment_cnt: "4", time: "2022-06-11 00:01", title: "제목 23" },
+    { postid: "number3", img_url: "이미지3", tag: ["이런태그", "달고있는"], user_nick: "김성모", comment_cnt: "5", time: "2022-06-11 00:02", title: "제목 34" },
+    { postid: "number4", img_url: "이미지4", tag: ["나는정말", "이게먼지"], user_nick: "김성모", comment_cnt: "6", time: "2022-06-11 00:03", title: "제목 45" },
+    { postid: "number5", img_url: "이미지5", tag: ["모르겠다", "대머리"], user_nick: "김성모", comment_cnt: "7", time: "2022-06-11 00:04", title: "제목 50" },
   ],
-  tag: ["tag0","tag1", "tag2", "tag3", "tag4","tag5"],
+  tag: ["대머리", "럭키짱", "아무거나", "내맘대로", "이런태그", "달고있는", "나는정말", "이게먼지", "모르겠다", "이게맞나"],
 };
 
 // Action Creators
@@ -37,6 +38,29 @@ export function deletepost(post_index) {
 }
 
 // // middlewares
+
+export const LoadPostAxios = () => {
+  axios.defaults.withCredentials = true;
+  return async function (dispatch) {
+    await axios(
+      {
+        url: "/user/login",
+        method: "get",
+        baseURL: "http://52.78.217.50:8080",
+      }
+    )
+      .then(response => {
+        console.log(response);
+        let post_list = [];
+        response.data.forEach((b) => {
+          post_list.push({ id: b.id, ...b.data() });
+        });
+        dispatch(loadpost(post_list));
+        // setList(response.data);
+      })
+      .catch((response) => { window.alert(response.response.data) });
+  }
+}
 
 // export const loadPostFB = () => {
 //   return async function (dispatch) {

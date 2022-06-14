@@ -25,6 +25,8 @@ const PostEdit = () => {
     const params = useParams();
     const navigate = useNavigate();
 
+    const tag_lists = useSelector((state) => state.post.tag);
+
 
     const post_id = params.postid;
 
@@ -37,7 +39,6 @@ const PostEdit = () => {
     };
     const index = find_index(post_id);
 
-    const [img_check, setImg] = React.useState(null);
     const [title_check, setTitle] = React.useState("");
     const [tag_check, setTag] = React.useState("");
 
@@ -48,11 +49,8 @@ const PostEdit = () => {
     const up_txt_ref = React.useRef(null);
     const down_txt_ref = React.useRef(null);
     const title_ref = React.useRef(null);
-    const file_link_ref = React.useRef(null);
     const tag_ref = React.useRef(null);
 
-    let tags = [];
-    console.log(tags);
     //유저 정보 가져오기
     // const auth = getAuth();
     // const user = auth.currentUser;
@@ -81,24 +79,7 @@ const PostEdit = () => {
         }
     };
 
-    //작성 날짜
-    const t_stamp = new Date();
-    let up_time = t_stamp.toDateString() + ", " + t_stamp.getHours() + ":" + t_stamp.getMinutes();
 
-    //이미지 업로드
-    // const uploadFB = async (e) => {
-
-    //     const uploaded_file = await uploadBytes(
-    //         ref(storage, `images/${e.target.files[0].name}`),
-    //         e.target.files[0]
-    //     );
-
-
-    //     const file_url = await getDownloadURL(uploaded_file.ref);
-
-    //     file_link_ref.current = { url: file_url };
-    //     setImg(file_link_ref.current.url);
-    // };
 
     //Post 추가
     // const addPostList = () => {
@@ -133,71 +114,107 @@ const PostEdit = () => {
     //     navigate("/");
     // };
 
-    // function cancleTag(value, tags){
-    //     for(let i = 0; i < tags.length; i++){
-    //         if(tags[i] === value){
-    //             tags.splice(i,1);
-    //             i--;
-    //         }
-    //     }
-    // }
 
-    // const addTag= (value)=>{
-    //     tags.push(value);
-    //     console.log(tags);
-    // }
+        //Tag 추가
+        const [newtag, setNewtag] = React.useState("");
+        const [tags, setTags] = React.useState([]);
+    
+        const onTag = (e) => {
+            e.preventDefault();
+            if (newtag !== null && newtag !== "") {
+                const taglist = [...tags, newtag];
+                setTags(taglist);
+            }
+            setNewtag("")
+        }
+    
+        const onChangeTag = (e) => {
+            e.preventDefault();
+            setNewtag(e.target.value);
+    
+        }
+    
+        const deleteTag = (e, idx) => {
+            e.preventDefault();
+            const deltag = tags.splice(idx, 1);
+            setNewtag(deltag);
+        }
 
     return (
-        <PostingPage>
-            <Subtitle>게시글 수정</Subtitle>
-            <CardStyle>
-                <CardInside>
-                    <ImgTxtDiv>
-                        <TxtDiv>
-                            {(up_layer_value === "") ? (null) : (
-                                <Ballon>{single_lists[index].up_text_value}</Ballon>
-                            )}
-                            <ImgInputed src={single_lists[index].img_url} style={{ marign: "0px", padding: "0px" }} />
-                            {(down_layer_value === "") ? (null) : (
-                                <Ballon>{single_lists[index].down_text_value}</Ballon>
-                            )}
-                        </TxtDiv>
-                    </ImgTxtDiv>
-                    <LayerDiv>
+        <CardStyle>
+            <CardInside>
+                <ImgTxtDiv>
+                    <ImageDiv>
+                        {(up_layer_value === "") ? (null) : (
+                            <Ballon>{single_lists[index].up_text_value}</Ballon>
+                        )}
+                        <ImgInputed src={single_lists[index].img_url} style={{ marign: "0px", padding: "0px" }} />
+                        {(down_layer_value === "") ? (null) : (
+                            <Ballon>{single_lists[index].down_text_value}</Ballon>
+                        )}
+                    </ImageDiv>
+                </ImgTxtDiv>
+                <LayerDiv>
+                    <TitleDiv >
+                        <h1 style={{ margin: "0px", color: "white" }}>제목 :</h1>
+                        <input type="text"
+                            ref={title_ref}
+                            onChange={(e) => {
+                                setTitle(e.target.value);
+                            }} placeholder="제목을 입력해주세요"
+                            style={{ marginLeft: "60px", width: "70%", textAlign: "center", fontWeight: "600", fontSize: "25px" }}
+                        />
+                    </TitleDiv>
+                    <TagDiv>
+                        <h2 style={{ border: "2px solid #2f2f2f", borderRadius: "10px", margin: "5px auto 10px auto", color: "orange", backgroundColor: "white", width: "100px" }}>TAG</h2>
+                        <SelectTagDiv>
+                            {tags.map((v, idx) => {
+                                return (
+                                    <SelectTag
+                                        onClick={(e, idx) => deleteTag(e, idx)}
+                                    >{tags[idx]}</SelectTag>
+                                )
+                            })
+                            }
+                        </SelectTagDiv>
+                        <TagForm onSubmit={(e) => onTag(e)}>
+                            {/* 인풋으로 태그 추가하는 법 
+                            <TagInput type="text" value={newtag} placeholder="태그를 입력하세요" onChange={onChangeTag} />
+                            <TagAddBtn type="submit">태그 추가</TagAddBtn> */}
+                            {/*Select로 추가하는 법*/}
+                            <TagSelect type="text" value={newtag} onChange={onChangeTag}>
+                                <option value="" selected disabled hidden> Select a Tag </option>
+                                {tag_lists.map((tags, idx) => {
+                                    return (
+                                        <option key={idx} value={tags}>{tags}</option>
+                                    );
+                                })}
+                            </TagSelect>
+                            <button type="submit" >태그추가</button>
+                        </TagForm>
+                    </TagDiv>
+                    <BallonDiv>
+                        <Ballon>말풍선 고르기</Ballon>
                         <div>
-                            <h3>제목</h3>
-                            <input type="text"
-                                ref={title_ref}
-                                onChange={(e) => {
-                                    setTitle(e.target.value);
-                                }} />
+                            <div>
+                                <input type="checkbox" name="1" value="upText" onChange={up_is_checked} style={{ marginBottom: "10px" }} /><strong>상단 말풍선</strong><br />
+                                <input type="text" ref={up_txt_ref} placeholder="짤태식이" onChange={(e) => { setUpTxt(e.target.value) }} style={{ height: "20px", textAlign: "center", marginBottom: "10px" }} />
+                            </div>
+                            <div>
+                                <input type="checkbox" name="2" value="downText" onChange={down_is_checked} style={{ marginBottom: "10px" }} /><strong>하단 말풍선</strong><br />
+                                <input type="text" ref={down_txt_ref} placeholder="돌아왔구나" onChange={(e) => { setDownTxt(e.target.value) }} style={{ height: "20px", textAlign: "center", marginBottom: "10px" }} />
+                            </div>
                         </div>
-                        <div>
-                            <h3>TAG</h3>
-                            <input type="text" ref={tag_ref} onChange={(e) => { setTag(e.target.value) }} />
-
-                        </div>
-                        <h3>레이아웃 고르기</h3>
-                        <div>
-                            <input type="checkbox" name="1" value="upText" onChange={up_is_checked} style={{ marginBottom: "10px" }} />1번 텍스트<br />
-
-                            <input type="text" ref={up_txt_ref} defaultValue={single_lists[index].up_text_value} onChange={(e) => { setUpTxt(e.target.value) }} />
-
-                        </div>
-                        <div>
-                            <input type="checkbox" name="2" value="downText" onChange={down_is_checked} style={{ marginBottom: "10px" }} />2번 텍스트  <br />
-                            <input type="text" ref={down_txt_ref} defaultValue={single_lists[index].down_text_value} onChange={(e) => { setDownTxt(e.target.value) }} />
-                        </div>
-                    </LayerDiv>
-                </CardInside>
-            </CardStyle>
-            <AddWordBtn
-                disabled={
-                    img_check === null || title_check === ""
-                        ? true : false
-                }
-            >작성 완료</AddWordBtn>
-        </PostingPage>
+                    </BallonDiv>
+                    <EditPostBtn
+                        disabled={
+                            title_check === "" || tags ===[]
+                                ? true : false
+                        }
+                    >수정 완료</EditPostBtn>
+                </LayerDiv>
+            </CardInside>
+        </CardStyle>
     );
 };
 
@@ -210,30 +227,16 @@ font-size: 35px;
 font-weight: 600;
 `;
 
-const PostingPage = styled.div`
-margin-top: 90px;
-`;
-
-const Subtitle = styled.h1`
-    width: 325px;
-    height: 50px;
-    font-weight: 600;
-    text-align: center;
-    margin: 0px auto;
-    color: darkblue;
-`;
-
 const CardStyle = styled.div`
 display: flex;
 flex-direction: column;
 align-items: center;
-margin: 10px auto auto auto;
+margin: 90px auto auto auto;
 padding: 10px 10px;
-border: 20px solid lightskyblue;
+border: 10px solid gray;
 border-radius: 10px;
 width: 80vw;
-height: 80vh;
-background-color: #cfffaf;
+background: darkgray;
 `;
 
 const CardInside = styled.div`
@@ -248,14 +251,16 @@ padding: 0px;
 const ImgTxtDiv = styled.div`
 display: flex;
 flex-direction: column;
+align-items: center;
 width: 50%;
 margin: 0px auto;
 `;
 
-const ImgDiv = styled.div`
-height: 30%;
+const ImageDiv = styled.div`
+display: flex;
+flex-direction: column;
 margin: 10px auto;
-padding: 0;
+border:3px solid white;
 `;
 
 const InputImg = styled.input`
@@ -265,7 +270,7 @@ height: 24px;
 margin: 10px auto;
 `;
 
-const TxtDiv = styled.div`
+const ImgDiv = styled.div`
 /* height: 70%; */
 display: flex;
 flex-direction: column;
@@ -283,57 +288,94 @@ const LayerDiv = styled.div`
 display: flex;
 flex-direction: column;
 width: 50%;
+gap: 20px;
 margin: 0;
 max-height: 100%;
 `;
 
-const RowLayer = styled.div`
+const TitleDiv = styled.div`
 display: flex;
 flex-direction: row;
-height: 100px;
+border: 1px solid black;
+padding: 20px;
+height: 50px;
+background-color: #2f2f2f;
+border-radius: 10px;
+margin-top: 10px;
+`;
+
+const TagDiv = styled.div`
+border: 10px solid #2f2f2f;
+border-radius: 10px;
+height: 260px;
+padding: 10px;
+background-color: white;
+`;
+
+const SelectTagDiv = styled.div`
+display: flex;
+flex-wrap: wrap;
+border: 2px solid #2f2f2f;
+border-radius: 10px;
+gap: 5px;
+padding: 7px 5px;
+height: 120px;
+overflow-y: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const TagForm = styled.form`
+display: flex;
+flex-direction: row;
 justify-content: center;
+gap: 20px;
+margin: 20px auto;
+padding: 10px;
+border-radius: 10px;
 `;
 
-const RowTxt = styled.div`
-width: 15vh;
-height: 8vh;
-line-height: 8vh;
+const TagSelect = styled.select`
+height: 25px;
+width:200px;
+font-size: 17px;
+text-align: center;
+border-radius: 5px;
+`;
+
+const BallonDiv = styled.div`
+border: 1px solid black;
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+gap: 50px;
+border: 10px solid #2f2f2f;
+border-radius: 10px;
 background-color: white;
+padding: 20px;
 `;
 
-const RowImg = styled.img`
-width: 15vh;
-height: 8vh;
-object-fit: cover;
+const SelectTag = styled.div`
+background-color: orange;
+height: 40px;
+line-height: 40px;
+width: 120px;
+margin: 5px;
+border-radius: 10px;
+font-weight: 600;
 `;
 
-const ColLayer = styled.div`
-height: 100px;
-margin: auto;
-`;
-
-const ColImg = styled.img`
-width: 20vh;
-height: 4vh;
-object-fit: cover;
-`;
-
-const ColTxt = styled.div`
-width: 20vh;
-height: 4vh;
-line-height: 4vh;
-margin: auto;
-background-color: white;
-`;
-
-const AddWordBtn = styled.button`
+const EditPostBtn = styled.button`
     margin: 10px auto;
-    width: 82vw;
+    width: 30%;
     height: 50px;
-    background-color: #673ab7;
+    background-color: #353535;
     color: white;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 30px;
+    border-radius: 10px;
+    font-family: 'Black Han Sans';
 `;
 
 export default PostEdit;

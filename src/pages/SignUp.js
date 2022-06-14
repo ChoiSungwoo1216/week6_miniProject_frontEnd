@@ -70,7 +70,7 @@ const SignUp = () => {
             .then(response => {
                 console.log(response);
             })
-            .catch((response) => { console.log("Error!") });
+            .catch((response) => { window.alert(response.respose.data) });
         window.alert("회원가입 완료");
         navigate("/")
     }
