@@ -40,7 +40,6 @@ const Main = () => {
     //     onAuthStateChanged(auth, loginCheck);
     // })
     const [tagvalue, setTag] = React.useState("")
-    const tag_ref = React.useRef(null);
 
     function searchTag(tag, tag_list) {
         for (let i = 0; i < tag_list.length; i++) {
@@ -102,28 +101,66 @@ const Main = () => {
     //     loadPostList();
     //     loadCommentList();
     // });
+    const [search, setSearch] = React.useState("");
+    const [lists, setLists] = React.useState(post_lists);
+    const [open, setOpen] = React.useState(false);
+
+    const onSearch = (e) => {
+        e.preventDefault();
+        if (search === null || search === "") {
+            // axios.get("url")
+            // .then((response)=>{
+            //     setLists(response.data.post)
+            // })
+            setLists(post_lists);
+        } else {
+            const filterData = lists.filter((lists) => lists.tag.includes(search))
+            setLists(filterData);
+        }
+        setSearch("");
+    }
+    const onChangeSearch = (e) => {
+        e.preventDefault();
+        setSearch(e.target.value);
+    }
 
     return (
         <Page>
-            <div>
-                <TagSearch type="text" ref={tag_ref} onChange={(e) => { setTag(e.target.value); }} placeholder="Tag를 입력하세요" />
-            </div>
-            <TagBox>
-                {tag_lists.map((tag, idx) => {
-                    return (
-                        <TagBtn key={idx}
-                            onClick={() => { setTag(tag_lists[idx]) }}
-                        >
-                            {tag_lists[idx]}
-                        </TagBtn>
-                    );
-                })}
-            </TagBox>
+            <FontAwesomeIcon icon="fa-magnifying-glass" size="2x" style={{ position: "fixed", top: "20px", left: "120px", zIndex: "10", color: "black" }} 
+            onClick={()=>{setOpen(true)}}
+            />
+            {open?(
+            <SearchDiv>
+                <SearchForm onSubmit={e => onSearch(e)}>
+                    <TagSearch
+                        type="text"
+                        value={search}
+                        placeholder="태그를 검색하세요"
+                        onChange={onChangeSearch}
+                    />
+                    <SearchBtn type="submit">검색</SearchBtn >
+                    <FontAwesomeIcon icon="fa-circle-xmark" style={{marginLeft: "21%"}}
+                    onClick={()=>{setOpen(false)}}
+                    />
+                </SearchForm>
+                <TagBox>
+                    {tag_lists.map((tags, idx) => {
+                        return (
+                            <TagBtn key={idx}
+                                // onClick={() => { setLists(lists.filter((lists)=>lists.tag.includes(tag_lists[idx]))) }}
+                            >
+                                {tag_lists[idx]}
+                            </TagBtn>
+                        );
+                    })}
+                </TagBox>
+            </SearchDiv>    
+            ):(null)}      
             <ListStyle>
-                {post_lists.map((list, index) => {
+                {lists.map((list, index) => {
                     return (
                         <div key={index}>
-                            {searchTag(tagvalue, list.tag) ? (
+
                                 <CardStyle >
                                     <ImgDiv
                                         onClick={() => {
@@ -136,27 +173,27 @@ const Main = () => {
                                     <CardInfo >
                                         <FontAwesomeIcon icon="fa-heart" color="red" size="2x" />
                                         <Cnt>{list.liked}</Cnt>
-                                        <h5 style={{ fontStyle: " italic", color:"white" }}> {list.user_nick}님의 게시물 <br /> {list.time}</h5>
+                                        <h5 style={{ fontStyle: " italic", color: "white" }}> {list.user_nick}님의 게시물 <br /> {list.time}</h5>
 
                                         <FontAwesomeIcon icon="fa-comment-dots" color="white" size="2x" />
                                         <Cnt>{list.comment_cnt}</Cnt>
                                     </CardInfo>
                                     <ExtraDiv>
                                         <TagDiv>
-                                            {list.tag.map((t,i)=>{
-                                                return(
-                                                    <SmallTag>{list.tag[i]}</SmallTag>
+                                            {list.tag.map((t, i) => {
+                                                return (
+                                                    <SmallTag key={i}>{list.tag[i]}</SmallTag>
                                                 );
                                             })}
                                         </TagDiv>
                                         {is_login ? (
                                             <EDBtn>
-                                                <FontAwesomeIcon icon="fa-pen-to-square" color="white" size="x"
+                                                <FontAwesomeIcon icon="fa-pen-to-square" color="white"
                                                     onClick={() => {
                                                         navigate("/postedit/" + list.postid);
                                                     }}
                                                 />
-                                                 <FontAwesomeIcon icon="fa-trash-can" color="white" size="x"
+                                                <FontAwesomeIcon icon="fa-trash-can" color="white"
                                                     onClick={() => {
                                                         // dispatch(deletepost({index}));
                                                         window.alert("삭제 완료");
@@ -167,12 +204,10 @@ const Main = () => {
                                         }
                                     </ExtraDiv>
                                 </CardStyle>
-                            ) : (null)}
                         </div>
 
                     );
                 })}
-
             </ListStyle>      {
                 is_login ? (
 
@@ -202,10 +237,10 @@ const ListStyle = styled.div`
     padding: 20px;
     justify-content: center;
   overflow-x: hidden;
-  overflow-y: scroll;
+ overflow-y: scroll;
   ::-webkit-scrollbar {
     display: none;
-  }
+  } 
 `;
 
 const TagBox = styled.div`
@@ -220,6 +255,29 @@ const TagBox = styled.div`
 
 
 //
+const SearchDiv = styled.div`
+background-color: #e3e3e3;
+margin: 0px auto;
+border: 1px solid white;
+border-radius: 10px;
+width: 80vw;
+`;
+
+const SearchForm = styled.form`
+display: flex;
+flex-direction: row;
+margin: 10px auto;
+`;
+
+const SearchBtn = styled.button`
+margin-left: 10px;
+background-color: white;
+border-radius: 3px;
+border: 1px solid black;
+color: black;
+padding: 0.25em 0.55em;
+font-size: 16px;
+`;
 
 const CardStyle = styled.div`
 position: relative;
@@ -242,6 +300,8 @@ const TagSearch = styled.input`
 text-align: center;
 width: 30vw;
 height: 25px;
+margin-left: 30%;
+border: 1px solid black;
 `;
 
 const TagBtn = styled.button`
@@ -294,7 +354,7 @@ font-size: 32px;
 border:1px solid white;
 `;
 
-const CardInfo =styled.div`
+const CardInfo = styled.div`
 display: flex;
 flex-direction: row;
 gap: 20px;

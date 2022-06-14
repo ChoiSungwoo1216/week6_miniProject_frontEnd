@@ -1,10 +1,13 @@
 import React from "react";
-import styled from "styled-components";
+import styled from "styled-components"
 
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 import talking from "../Img/talking.PNG"
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 
 // import axios from "axios"
 
@@ -77,90 +80,95 @@ const Post = () => {
         <CardStyleD>
             <PostTitle>{single_lists[index].title}</PostTitle>
 
-            <InfoTitle>
-                <h5 style={{ fontStyle: " italic" }}>{single_lists[index].user_nick}님의 게시물 <br /> {single_lists[index].time}</h5>
-                {/* {user_check(index, user) ? ( */}
-                <EDBtn>
-                    <button onClick={() => { navigate("/postedit/" + post_id) }}>수정하기</button>
-                    <button
-                    // onClick={() => {
-                    //     dispatch(deletePostFB(single_lists[index].id));
-                    //     window.alert("삭제 완료");
-                    //     navigate("/");
-                    // }}
-                    >삭제하기</button>
-                </EDBtn>
-                {/* ) : (null) */}
-                {/* } */}
-            </InfoTitle>
-            {/* {
-                `${single_lists[index].layer}` === "leftText"
-                    ? (
-                        <Rowlayer>
-                            <RowTxt>{post_lists[index].explanation}</RowTxt>
-                            <RowImg src={post_lists[index].image_url} alt="업로드 사진" />
-                        </Rowlayer>
-                    ) : (null)
-            } */}
-            {/* {
-                `${post_lists[index].layer}` === "rightText"
-                    ? ( */}
             <Rowlayer>
                 {/* <RowImg src={single_lists[index].img_url} alt="업로드 사진" /> */}
-                <div>
-                    <ImgTxtDiv>
-                        <TxtDiv>
-                            {(single_lists[index].up_text_layer === "") ? (null) : (
-                                <Ballon>{single_lists[index].up_text_value}</Ballon>
-                            )}
-                            <ImgInputed src={single_lists[index].img_url} style={{ marign: "0px", padding: "0px" }} />
-                            {(single_lists[index].down_text_layer === "") ? (null) : (
-                                <Ballon>{single_lists[index].down_text_value}</Ballon>
-                            )}
-                        </TxtDiv>
-                    </ImgTxtDiv>
 
-                    {like ? (
-                        <Like style={{ color: "red" }} onClick={() => { setLike(false) }}>
-                            ❤
-                        </Like>
-                    ) : (
-                        <Like onClick={() => { setLike(true) }}>
-                            🤍
-                        </Like>
-                    )
-                    }
-                </div>
-                <div style={{ width: "30vw", height: "50vh", margin: "0px auto" }}>
-                    {single_lists[index].comment_list.map((list, idx) => {
-                        return (
-                            <div style={{ border: "1px solid black", margin: "10px" }}>
-                                <div>{list.comment}</div>
-                                <div>{list.time}</div>
+                <ImgTxtDiv>
+                    {(single_lists[index].up_text_layer === "") ? (null) : (
+                        <Ballon>{single_lists[index].up_text_value}</Ballon>
+                    )}
+                    <ImgInputed src={single_lists[index].img_url} style={{ marign: "0px", padding: "0px" }} />
+                    {(single_lists[index].down_text_layer === "") ? (null) : (
+                        <Ballon>{single_lists[index].down_text_value}</Ballon>
+                    )}
+                </ImgTxtDiv>
+                <div>
+                    <InfoTitle>
+                        <h5 style={{ fontStyle: " italic", color: "white", marginTop:"0px"}}>{single_lists[index].user_nick}님의 게시물 {single_lists[index].time}</h5>
+                        {/* {user_check(index, user) ? ( */}
+                        <EDBtn>
+                            <FontAwesomeIcon icon="fa-pen-to-square" color="white" size="x"
+                                onClick={() => {
+                                    navigate("/postedit/" + post_id);
+                                }}
+                            />
+                            <FontAwesomeIcon icon="fa-trash-can" color="white" size="x"
+                                onClick={() => {
+                                    // dispatch(deletepost({index}));
+                                    window.alert("삭제 완료");
+                                }}
+                            />
+                        </EDBtn>
+                        {/* ) : (null) */}
+                        {/* } */}
+                    </InfoTitle>
+
+                    <div style={{ borderRadius:"5px",border: "5x solid white", width: "30vw", height: "50vh", margin: "0px auto", padding:"10px" }}>
+                        {single_lists[index].comment_list.map((list, idx) => {
+                            return (
+                                <CommentDiv >
+                                    <div style={{ margin: "5px" }}>{list.comment}</div>
+                                    <h5 style={{ marginBottom: "0px", marginTop: "10px" }}>{list.user_nick} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {list.time}</h5>
+                                </CommentDiv>
+                            );
+                        })
+                        }
+                        {/* <button onClick={addCommentList}>댓글 작성하기</button> */}
+                    </div>
+                    <div>
+                        {like ? (
+                            <div style={{display:"flex", flexDirection:"row"}}>
+                                <Like style={{ color: "red" }} onClick={() => { setLike(false) }}>
+                                    ❤
+                                </Like>
+                                <h3 style={{color:"white", margin:"0 auto", lineHeight:"65px"}}>{single_lists[index].liked}</h3>
                             </div>
-                        );
-                    })
-                    }
-                    {/* <button onClick={addCommentList}>댓글 작성하기</button> */}
+                        ) : (
+                            <div style={{display:"flex", flexDirection:"row"}}>
+                                <Like onClick={() => { setLike(true) }}>
+                                    🤍
+                                </Like>
+                                <h1 style={{color:"white", margin:"0 auto", lineHeight:"65px"}}>{single_lists[index].liked}</h1>
+                            </div>
+                        )
+                        }
+                        <div style={{ color: "white" }}></div>
+                    </div>
                 </div>
             </Rowlayer>
-            {/* )
-                    : (null)
-            } */}
-            {/* {
-                `${post_lists[index].layer}` === "downText"
-                    ? (
-                        <Columnlayer>
-                            <ColImg src={post_lists[index].image_url} alt="업로드 사진" />
-                            <ColTxt > {post_lists[index].explanation} </ColTxt >
-                        </Columnlayer>)
-                    : (null)
-            }
-            <br /> */}
-            <button onClick={() => { navigate("/") }}>돌아가기</button>
+            <ReturnBtn>
+            <FontAwesomeIcon icon="fa-arrow-rotate-left" color="white" size="2x" onClick={() => { navigate("/") }}/>
+            </ReturnBtn>
         </CardStyleD>
     );
 }
+
+
+const ReturnBtn = styled.div`
+margin-left: 90%;
+transition: transform 300ms ease-in-out;
+&:hover {
+  transform: rotate(-360deg);
+}
+`;
+
+
+const CommentDiv = styled.div`
+border-radius: 10px;
+background-color: white;
+margin: 10px;
+padding: 5px;
+`;
 
 const PostTitle = styled.div`
 background-color: transparent;
@@ -170,7 +178,7 @@ height: 50px;
 line-height: 50px;
 color: white;
 font-family: "Dokdo";
-font-size: 100px;
+font-size: 70px;
 `;
 
 const ImgInputed = styled.img`
@@ -192,6 +200,7 @@ font-weight: 600;
 const ImgTxtDiv = styled.div`
 display: flex;
 flex-direction: column;
+
 width: 50%;
 margin: 0px auto;
 `;
@@ -208,7 +217,7 @@ margin: 100px auto 20px auto;
 width: 80vw;
 background: rgba(0, 0, 0, 0.5);
 padding: 20px;
-border: 2px solid blueviolet;
+border: 2px solid gray;
 border-radius: 10px;
 `;
 
@@ -217,6 +226,7 @@ display: flex;
 flex-direction: row;
 justify-content: center;
 gap: 10px;
+margin-top: 0px;
 `;
 
 const EDBtn = styled.div`
@@ -231,8 +241,7 @@ display: flex;
 flex-direction: row;
 width: 100%;
 gap: 10px;
-margin: 0px;
-padding: 0px;
+margin: 0px auto;
 `;
 
 const RowImg = styled.img`
@@ -248,12 +257,17 @@ line-height: 40vh;
 background-color: white;
 `;
 
+
+
 const Like = styled.div`
-font-size: 15px;
+width: 50px;
+height: 50px;
+font-size: 45px;
+margin: 0px auto;
 
-
+transition: transform 300ms ease-in-out;
 &:hover {
-  font-size: large;
+  font-size: 50px;
 }
 `;
 

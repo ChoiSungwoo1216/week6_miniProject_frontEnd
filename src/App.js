@@ -13,8 +13,8 @@ import PostEdit from "./pages/PostEdit"
 
 //font-awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faPen, faHeart, faHouse, faPenToSquare, faTrashCan, faCommentDots } from '@fortawesome/free-solid-svg-icons'
-library.add(faHouse, faHeart, faPen, faPenToSquare, faTrashCan, faCommentDots);
+import { faPen, faHeart, faHouse, faPenToSquare, faTrashCan, faCommentDots, faArrowRotateLeft, faMagnifyingGlass, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
+library.add(faHouse, faHeart, faPen, faPenToSquare, faTrashCan, faCommentDots, faArrowRotateLeft, faMagnifyingGlass, faCircleXmark);
 
 
 

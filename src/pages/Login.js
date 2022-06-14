@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 // import { auth } from "../shared/firebase";
 // import { signInWithEmailAndPassword } from "firebase/auth"
 
-// import axios from "axios"
+import axios from "axios"
 import { login } from "../axios/login";
 
 const Login = () => {
@@ -39,26 +39,29 @@ const Login = () => {
     // }
 
     //axios
-const loginAxios = 
-// async 
-() => {
-    login(id_check, pwd_check);
-    // axios.post("http://localhost:5001/comment_list",
-    //     {
-    //         "email": id_check,
-    //         "password": pwd_check
-    //     },
-    //     {
-    //         headers: {
-    //             'Content-type': 'application/json',
-    //             'Accept': 'application/json'
-    //         }
-    //     }
-    // )
-    // .then(response => {
-    //     console.log(response); })
-    //     .catch((response)=>{console.log("Error!")});
-}
+    const loginAxios = async () => {
+        // login(id_check, pwd_check);
+        axios.defaults.withCredentials = true;
+        axios(
+            {
+                url: "/user/login",
+                method: "post",
+                data: {
+                    "email": id_check,
+                    "password": pwd_check
+                },
+                baseURL: "http://52.78.217.50:8080",
+            }
+        )
+            .then(response => {
+                let jwtToken = response.headers.get("authorization");
+                let rfToken = response.headers.get("refreshToken")
+                localStorage.setItem("Authorization", jwtToken);
+                localStorage.setItem("RefreshToken", rfToken);
+                console.log(response);
+            })
+            .catch((response) => { window.alert(response.response.data) });
+    }
 
 
     return (
