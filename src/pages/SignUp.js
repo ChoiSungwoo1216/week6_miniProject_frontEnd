@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 // import { collection, addDoc } from "firebase/firestore";
 import { emailCheck, passwordCheck, DoubleCheck } from "../shared/Validation";
 
+import peace from "../Img/peace.jpg"
+
 import axios from "axios";
 
 
@@ -75,49 +77,13 @@ const SignUp = () => {
         navigate("/")
     }
 
-    // const signupFB = async () => {
-    //     // 이메일 양식 확인
-    //     if (!emailCheck(new_id_ref.current.value)) {
-    //         setId(true);
-    //         window.alert("이메일 형식이 맞지 않습니다.");
-    //     };
-    //     // 비밀번호 양식 확인
-    //     if (!passwordCheck(new_password_ref.current.value)) {
-    //         setPwd(true);
-    //         window.alert("비밀번호 양식이 틀렸습니다!")
-    //     }
-    //     // 비밀번호 확인 
-    //     if (!DoubleCheck(new_password_ref.current.value, new_password_ref_check.current.value)) {
-    //         setPwdCheck(true);
-    //         window.alert("비밀번호 확인이 틀렸습니다!")
-    //     }
-    //     // 양식이 다 맞다면 회원가입 성공시키기
-    //     if (
-    //         emailCheck(new_id_ref.current.value) &&
-    //         passwordCheck(new_password_ref.current.value) &&
-    //         DoubleCheck(new_password_ref.current.value, new_password_ref_check.current.value)
-    //     ) {
-    //         // 아이디, 패스워드 만들기
-    //         createUserWithEmailAndPassword(
-    //             auth,
-    //             new_id_ref.current.value,
-    //             new_password_ref.current.value,
-    //         );
-    //         // firebase db에 유저 아이디와 이름 저장
-    //         await addDoc(collection(db, "users"), {
-    //             user_id: new_id_ref.current.value,
-    //             nick: new_nick_ref.current.value
-    //         });
-
-    //         window.alert("회원가입 완료");
-    //         navigate("/")
-    //     }
-    // }
-
     return (
         <WordDiv>
-            <Subtitle>회원가입하기</Subtitle>
+            <div>
+                <img src={peace}/>
+            </div>
             <CardStyle>
+            <Subtitle>회원가입하기</Subtitle>
                 <SmallTitle>닉네임</SmallTitle>
                 <Input>
                     <input
@@ -196,10 +162,11 @@ const SignUp = () => {
 const WordDiv = styled.div`
 max-width: 450px;
 display: flex;
-flex-direction: column;
+flex-direction: row;
 align-items: center;
 justify-content: center;
-margin: 100px auto;
+gap: 50px;
+margin: 150px auto;
 `;
 
 const Subtitle = styled.div`
@@ -209,16 +176,16 @@ const Subtitle = styled.div`
     font-weight: 600;
     text-align: center;
     margin-top: 25px;
-    color: darkviolet;
-    text-decoration: underline blueviolet;
+    color: #383838;
+    text-decoration: underline #383838;
 `;
 
 const CardStyle = styled.div`
 margin: 10px;
 padding: 10px;
-border: 20px solid lightskyblue;
+border: 10px solid gray;
 border-radius: 10px;
-background-color: #cfffaf;
+background-color: white;
 `;
 
 const SmallTitle = styled.h5`

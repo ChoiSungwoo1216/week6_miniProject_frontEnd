@@ -32,3 +32,11 @@ export const register = (user_nick, email, password) => {
 export const getCurrentUser =() => {
     return JSON.parse(localStorage.getItem("user"));
 };
+
+
+// {
+//     headers: {
+//         "Authorization": localStorage.getItem("Authorization"),
+//         "RefreshToken": localStorage.getItem("RefreshToken")
+//     }
+// }

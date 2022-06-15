@@ -23,7 +23,7 @@ const Posting = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const tag_lists = useSelector((state) => state.post.tag);
+    const tag_lists = useSelector((state) => state.single.tag);
 
     //작성이 되었는지 확인
     const [img_check, setImg] = React.useState(null);
@@ -39,6 +39,7 @@ const Posting = () => {
 
     // layer 선택
     const [up_layer_value, setUpLayout] = React.useState("");
+
     const up_is_checked = (e) => {
         if (e.target.checked) {
             setUpLayout(e.target.value);
@@ -48,6 +49,7 @@ const Posting = () => {
     };
 
     const [down_layer_value, setDownLayout] = React.useState("");
+
     const down_is_checked = (e) => {
         if (e.target.checked) {
             setDownLayout(e.target.value);
@@ -69,42 +71,42 @@ const Posting = () => {
 
         file_link_ref.current = { url: file_url };
         setImg(file_link_ref.current.url);
+        console.log(file_link_ref.current.url);
     };
 
     //Post 추가   
-
     const addPostAxios = async () => {
         axios.defaults.withCredentials = true;
         axios(
             {
-                url: "/user/login",
+                url: "/post/upload",
                 method: "post",
                 data: {
-                    "image_url": img_check,
                     "title": title_check,
-                    "tag": tags,
+                    "imgUrl": img_check,
+                    "tagList": tags,
                     "up_layer_value": up_layer_value,
                     "down_layer_value": down_layer_value,
                     "up_txt": up_txt,
                     "down_txt": down_txt,
                 },
                 baseURL: "http://52.78.217.50:8080",
-            },
-            {
+            // },
+            // {
                 headers: {
-                    "Authorization": localStorage.getItem("Authorization"),
-                    "Refreshtoken": localStorage.getItem("Refreshtoken")
+                    "Authorization" : localStorage.getItem("Authorization"),
+                    "RefreshToken" : localStorage.getItem("RefreshToken"),
                 }
-            }
+            },
         )
             .then(response => {
-                console.log(response);
-                window.alert("작성완료");
-                navigate("/");
+                // console.log(response);
+                window.alert(response.data);
+                // navigate("/");
             })
             .catch((response) => {
-                window.alert(response.response.data)
-                navigate("/");
+                console.log(response);
+                window.alert("실패")
             })
     };
 
@@ -112,6 +114,7 @@ const Posting = () => {
     //Tag 추가
     const [newtag, setNewtag] = React.useState("");
     const [tags, setTags] = React.useState([]);
+    console.log(tags);
 
     const onTag = (e) => {
         e.preventDefault();
@@ -171,7 +174,7 @@ const Posting = () => {
                         <SelectTagDiv>
                             {tags.map((v, idx) => {
                                 return (
-                                    <SelectTag
+                                    <SelectTag key={idx}
                                         onClick={(e, idx) => deleteTag(e, idx)}
                                     >{tags[idx]}</SelectTag>
                                 )
@@ -184,43 +187,29 @@ const Posting = () => {
                             <TagAddBtn type="submit">태그 추가</TagAddBtn> */}
                             {/*Select로 추가하는 법*/}
                             <TagSelect type="text" value={newtag} onChange={onChangeTag}>
-                                <option value="" selected disabled hidden> Select a Tag </option>
+                                <option value="" disabled hidden> Select a Tag </option>
                                 {tag_lists.map((tags, idx) => {
                                     return (
                                         <option key={idx} value={tags}>{tags}</option>
                                     );
                                 })}
                             </TagSelect>
-                            <button type="submit" >태그추가</button>
+                            <TagAddBtn type="submit" >태그 추가</TagAddBtn>
                         </TagForm>
 
                     </TagDiv>
                     <BallonDiv>
-                        <Ballon>말풍선 고르기</Ballon>
                         <div>
-                            <div>
-                                <input type="checkbox" name="1" value="upText" onChange={up_is_checked} style={{ marginBottom: "10px" }} /><strong>상단 말풍선</strong><br />
-                                <input type="text" ref={up_txt_ref} placeholder="짤태식이" onChange={(e) => { setUpTxt(e.target.value) }} style={{ height: "20px", textAlign: "center", marginBottom: "10px" }} />
-                            </div>
-                            <div>
-                                <input type="checkbox" name="2" value="downText" onChange={down_is_checked} style={{ marginBottom: "10px" }} /><strong>하단 말풍선</strong><br />
-                                <input type="text" ref={down_txt_ref} placeholder="돌아왔구나" onChange={(e) => { setDownTxt(e.target.value) }} style={{ height: "20px", textAlign: "center", marginBottom: "10px" }} />
-                            </div>
+                            <input type="checkbox" name="1" value="upText" onChange={up_is_checked} style={{ marginBottom: "10px" }} /><strong>상단 말풍선</strong><br />
+                            <input type="text" ref={up_txt_ref} placeholder="짤태식이" onChange={(e) => { setUpTxt(e.target.value) }} style={{ height: "20px", textAlign: "center", marginBottom: "10px" }} />
+                        </div>
+                        <div>
+                            <input type="checkbox" name="2" value="downText" onChange={down_is_checked} style={{ marginBottom: "10px" }} /><strong>하단 말풍선</strong><br />
+                            <input type="text" ref={down_txt_ref} placeholder="돌아왔구나" onChange={(e) => { setDownTxt(e.target.value) }} style={{ height: "20px", textAlign: "center", marginBottom: "10px" }} />
                         </div>
                     </BallonDiv>
                     <AddPostBtn
-                        onClick={
-                            // console.log(
-                            //     "image_url", img_check,
-                            //     "title", title_check,
-                            //     "tag", tags,
-                            //     "up_layer_value", up_layer_value,
-                            //     "down_layer_value", down_layer_value,
-                            //     "up_txt", up_txt,
-                            //     "down_txt", down_txt,
-                            // )
-                            addPostAxios
-                        }
+                        onClick={addPostAxios}
                         disabled={
                             img_check === null || title_check === "" || tags === []
                                 ? true : false
@@ -238,18 +227,12 @@ display: flex;
 flex-direction: row;
 justify-content: center;
 align-items: center;
-gap: 50px;
+gap: 20px;
 border: 10px solid #2f2f2f;
 border-radius: 10px;
 background-color: white;
 padding: 20px;
-`;
-
-const TagInput = styled.input`
-height: 25px;
-font-size: 17px;
-text-align: center;
-border-radius: 5px;
+min-width: 525px;
 `;
 
 const TagSelect = styled.select`
@@ -263,7 +246,11 @@ border-radius: 5px;
 const TagAddBtn = styled.button`
 height: 30px;
 width: 100px;
+border: 2px solid #2f2f2f;
 border-radius: 5px;
+font-size: 15px;
+font-weight: 400;
+background-color: orange;
 `;
 
 const TagForm = styled.form`
@@ -282,6 +269,7 @@ border-radius: 10px;
 height: 260px;
 padding: 10px;
 background-color: white;
+min-width: 525px;
 `;
 
 const TitleDiv = styled.div`
@@ -293,6 +281,7 @@ height: 50px;
 background-color: #2f2f2f;
 border-radius: 10px;
 margin-top: 10px;
+min-width: 525px;
 `;
 
 const SelectTagDiv = styled.div`
@@ -335,6 +324,15 @@ font-size: 35px;
 font-weight: 600;
 `;
 
+const BallonTwo = styled.div`
+background-image: url(${talking});
+width: 345px;
+height: 150px;
+line-height: 150px;
+font-size: 25px;
+font-weight: 500;
+`;
+
 const CardStyle = styled.div`
 display: flex;
 flex-direction: column;
@@ -353,7 +351,8 @@ flex-direction: row;
 width: 100%;
 gap: 10px;
 margin: 0px;
-padding: 0px;
+padding: 20px;
+overflow-x: auto;
 `;
 
 const ImgTxtDiv = styled.div`
@@ -401,7 +400,7 @@ display: flex;
 flex-direction: column;
 width: 50%;
 gap: 20px;
-margin: 0;
+margin: 10px;
 max-height: 100%;
 `;
 

@@ -2,11 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-import { logout, getCurrentUser} from "../axios/login";
-
 // font-awesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
 
 import gunma from "../Img/gunma.PNG"
 
@@ -14,12 +11,7 @@ const Header = () => {
     const navigate = useNavigate();
 
     const user = localStorage.getItem("user");
-    // const getUserInfo =() =>{
-    //     return axios.get("url" + "user", {headers: authHeader() });
-    // };
-    // const isAdmin =() =>{
-    //     return axios.get("url" + "admin", {headers: authHeader() });
-    // };
+
     //로그인 확인
     const [is_login, setIsLogin] = React.useState(false);
 
@@ -39,6 +31,7 @@ const Header = () => {
         localStorage.removeItem("Authorization");
         localStorage.removeItem("RefreshToken");
         localStorage.removeItem("user");
+        navigate("/");
     }
 
     return (
@@ -52,7 +45,7 @@ const Header = () => {
             <AboutLogin>
                 {is_login ? (
                     <div>
-                    <Btn onClick={logout()}/>
+                        <Btn onClick={logout}>로그아웃</Btn>
                     </div>
                 ) : (
                     <div>

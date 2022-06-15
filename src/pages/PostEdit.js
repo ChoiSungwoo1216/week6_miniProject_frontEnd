@@ -2,14 +2,10 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
-
-import { storage } from "../shared/firebase";
-// import { getAuth } from "firebase/auth";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
-// import { addPostFB } from "../redux/modules/post";
-
 import { useDispatch, useSelector } from "react-redux";
+
+import axios from "axios";
+
 
 // import { addsingle } from "../redux/modules/single";
 // import { addpost } from "../redux/modules/post";
@@ -22,11 +18,10 @@ const PostEdit = () => {
     //작성이 되었는지 확인
 
     const single_lists = useSelector((state) => state.single.list);
+    const tagLists = useSelector((state) => state.single.tag);
+
     const params = useParams();
     const navigate = useNavigate();
-
-    const tag_lists = useSelector((state) => state.post.tag);
-
 
     const post_id = params.postid;
 
@@ -51,16 +46,7 @@ const PostEdit = () => {
     const title_ref = React.useRef(null);
     const tag_ref = React.useRef(null);
 
-    //유저 정보 가져오기
-    // const auth = getAuth();
-    // const user = auth.currentUser;
-
-    // const user_list = useSelector((state) => state.users.list);
-    // const user_index = user_list.findIndex((b) => {
-    //     return b.user_id === user.email;
-    // });
-
-    // layer 선택
+       // layer 선택
     const [up_layer_value, setUpLayout] = React.useState(single_lists[index].up_text_value);
     const up_is_checked = (e) => {
         if (e.target.checked) {
@@ -79,45 +65,9 @@ const PostEdit = () => {
         }
     };
 
-
-
-    //Post 추가
-    // const addPostList = () => {
-    //     dispatch(addpost(
-    //         {
-    //             post_id: "number6",
-    //             user_nick: "강건마",
-    //             image_url: file_link_ref.current?.value,
-    //             title: explanation_ref.current?.value,
-    //             tag: [tag_ref.current.value],
-    //             layer: layer_value,
-    //             timestamp: t_stamp,
-    //             upload_time: up_time,
-    //         }
-    //     ),
-    //     addsingle(
-    //         {
-    //             post_id: "number6",
-    //             user_nick: "강건마",
-    //             image_url: file_link_ref.current?.value,
-    //             title: explanation_ref.current?.value,
-    //             tag: [tag_ref.current.value],
-    //             layer: layer_value,
-    //             timestamp: t_stamp,
-    //             upload_time: up_time,
-
-    //         }
-    //     )
-    //     );
-    //     window.alert("작성완료");
-
-    //     navigate("/");
-    // };
-
-
         //Tag 추가
         const [newtag, setNewtag] = React.useState("");
-        const [tags, setTags] = React.useState([]);
+        const [tags, setTags] = React.useState(single_lists[index].tag);
     
         const onTag = (e) => {
             e.preventDefault();
@@ -139,6 +89,39 @@ const PostEdit = () => {
             const deltag = tags.splice(idx, 1);
             setNewtag(deltag);
         }
+        //AXOIS
+        // const EditPostAxios = async () => {
+        //     axios.defaults.withCredentials = true;
+        //     axios(
+        //         {
+        //             url: "/updateMyPage/user_id",
+        //             method: "put",
+        //             data: {
+        //                 "title": title_check,
+        //                 "tag": tags,
+        //                 "up_layer_value": up_layer_value,
+        //                 "down_layer_value": down_layer_value,
+        //                 "up_txt": up_txt,
+        //                 "down_txt": down_txt,
+        //             },
+        //             baseURL: "http://52.78.217.50:8080",
+        //         },
+        //         {
+        //             headers: {
+        //                 "Authorization": localStorage.getItem("Authorization"),
+        //                 "RefreshToken": localStorage.getItem("RefreshToken")
+        //             }
+        //         }
+        //     )
+        //         .then(response => {
+        //             console.log(response);
+        //             window.alert(response.response.data);
+        //             navigate("/post/" + postid);
+        //         })
+        //         .catch((response) => {
+        //             window.alert(response.response.data)
+        //         })
+        // };
 
     return (
         <CardStyle>
@@ -170,7 +153,7 @@ const PostEdit = () => {
                         <SelectTagDiv>
                             {tags.map((v, idx) => {
                                 return (
-                                    <SelectTag
+                                    <SelectTag key={idx}
                                         onClick={(e, idx) => deleteTag(e, idx)}
                                     >{tags[idx]}</SelectTag>
                                 )
@@ -183,25 +166,30 @@ const PostEdit = () => {
                             <TagAddBtn type="submit">태그 추가</TagAddBtn> */}
                             {/*Select로 추가하는 법*/}
                             <TagSelect type="text" value={newtag} onChange={onChangeTag}>
-                                <option value="" selected disabled hidden> Select a Tag </option>
-                                {tag_lists.map((tags, idx) => {
+                                <option value="" disabled hidden> Select a Tag </option>
+                                {tagLists.map((t, ix) => {
                                     return (
-                                        <option key={idx} value={tags}>{tags}</option>
+                                        <option key={ix} value={t}>{t}</option>
                                     );
                                 })}
                             </TagSelect>
-                            <button type="submit" >태그추가</button>
+  
+                            <TagAddBtn type="submit" >태그추가</TagAddBtn>
                         </TagForm>
                     </TagDiv>
                     <BallonDiv>
                         <Ballon>말풍선 고르기</Ballon>
                         <div>
                             <div>
-                                <input type="checkbox" name="1" value="upText" onChange={up_is_checked} style={{ marginBottom: "10px" }} /><strong>상단 말풍선</strong><br />
+                                <input type="checkbox" name="1" value="upText" onChange={up_is_checked} style={{ marginBottom: "10px" }} 
+                                checked={up_layer_value !== "" ? true : false}
+                                /><strong>상단 말풍선</strong><br />
                                 <input type="text" ref={up_txt_ref} placeholder="짤태식이" onChange={(e) => { setUpTxt(e.target.value) }} style={{ height: "20px", textAlign: "center", marginBottom: "10px" }} />
                             </div>
                             <div>
-                                <input type="checkbox" name="2" value="downText" onChange={down_is_checked} style={{ marginBottom: "10px" }} /><strong>하단 말풍선</strong><br />
+                                <input type="checkbox" name="2" value="downText" onChange={down_is_checked} style={{ marginBottom: "10px" }} 
+                                checked={down_layer_value !== "" ? true : false}
+                                /><strong>하단 말풍선</strong><br />
                                 <input type="text" ref={down_txt_ref} placeholder="돌아왔구나" onChange={(e) => { setDownTxt(e.target.value) }} style={{ height: "20px", textAlign: "center", marginBottom: "10px" }} />
                             </div>
                         </div>
@@ -211,6 +199,7 @@ const PostEdit = () => {
                             title_check === "" || tags ===[]
                                 ? true : false
                         }
+                        // onClick={EditPostAxios}
                     >수정 완료</EditPostBtn>
                 </LayerDiv>
             </CardInside>
@@ -261,20 +250,6 @@ display: flex;
 flex-direction: column;
 margin: 10px auto;
 border:3px solid white;
-`;
-
-const InputImg = styled.input`
-background-color: white;
-width: 300px;
-height: 24px;
-margin: 10px auto;
-`;
-
-const ImgDiv = styled.div`
-/* height: 70%; */
-display: flex;
-flex-direction: column;
-margin: 10px auto;
 `;
 
 const ImgInputed = styled.img`
@@ -342,6 +317,16 @@ width:200px;
 font-size: 17px;
 text-align: center;
 border-radius: 5px;
+`;
+
+const TagAddBtn = styled.button`
+height: 30px;
+width: 100px;
+border: 2px solid #2f2f2f;
+border-radius: 5px;
+font-size: 15px;
+font-weight: 400;
+background-color: orange;
 `;
 
 const BallonDiv = styled.div`

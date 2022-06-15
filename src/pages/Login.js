@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 // import { signInWithEmailAndPassword } from "firebase/auth"
 
 import axios from "axios"
-import { login } from "../axios/login";
+import loginPic from "../Img/loginPic.png"
 
 const Login = () => {
 
@@ -54,22 +54,26 @@ const Login = () => {
             }
         )
             .then(response => {
-                let jwtToken = response.headers.get("authorization");
-                let rfToken = response.headers.get("refreshToken")
-                // let user = response.body.get("data");
-                // localStorage.setItem("user", user);
-                localStorage.setItem("Authorization", jwtToken);
-                localStorage.setItem("RefreshToken", rfToken);
-                console.log(response);
+                localStorage.setItem("user", response.config.data);
+                localStorage.setItem("Authorization", response.headers.authorization);
+                localStorage.setItem("RefreshToken", response.headers.refreshtoken);
+
+                navigate("/");
             })
-            .catch((response) => { window.alert(response.response.data) });
+            .catch((response) => {
+                console.log(response)
+                window.alert(response.message)
+            });
     }
 
 
     return (
         <WordDiv>
-            <Subtitle>로그인</Subtitle>
+            <div>
+                <img src={loginPic} />
+            </div>
             <CardStyle>
+                <Subtitle>로그인</Subtitle>
                 <IdPwdTitle>아이디</IdPwdTitle>
                 <Input>
                     <input type="text" ref={id_ref} style={{ width: "300px" }}
@@ -96,10 +100,11 @@ const Login = () => {
 const WordDiv = styled.div`
 max-width: 450px;
 display: flex;
-flex-direction: column;
+flex-direction: row;
+gap: 100px;
 align-items: center;
 justify-content: center;
-margin: 100px auto;
+margin: 140px auto;
 `;
 
 const Subtitle = styled.div`
@@ -109,16 +114,14 @@ const Subtitle = styled.div`
     font-weight: 600;
     text-align: center;
     margin-top: 25px;
-    color: darkviolet;
-    text-decoration: underline blueviolet;
 `;
 
 const CardStyle = styled.div`
-margin: 10px;
+margin: 10px auto;
 padding: 10px;
-border: 20px solid lightskyblue;
+border: 10px solid gray;
 border-radius: 10px;
-background-color: #cfffaf;
+background-color: white;
 `;
 
 const IdPwdTitle = styled.h5`
@@ -129,8 +132,7 @@ margin: 0px auto;
 const Input = styled.div`
   width: 300px;
   height: 50px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin: 10px auto;
   padding: 16px auto;
   display: flex;
   & input{
@@ -152,7 +154,7 @@ const LoginBtn = styled.button`
     margin-bottom: 20px;
     width: 100%;
     height: 50px;
-    background-color: #673ab7;
+    background-color: gray;
     color: white;
     font-size: 20px;
     font-weight: bold;

@@ -7,7 +7,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 //axios
-import axios from "axios";
+// import axios from "axios";
 
 // font-awesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,10 +22,12 @@ const Main = () => {
 
     //리덕스 연습
     const post_lists = useSelector((state) => state.post.list);
+    console.log(post_lists);
     const tag_lists = useSelector((state) => state.post.tag);
 
     // Post 전체 목록
-    const [post_list, setList] = React.useState([]);
+    // const [post_list, setList] = React.useState([]);
+    // console.log(post_list);
 
     //Tag 목록
     const [lists, setLists] = React.useState(post_lists);
@@ -34,24 +36,23 @@ const Main = () => {
     const [open, setOpen] = React.useState(false);
 
     // 로컬스토리지
-    // const user = localStorage.getItem("user")
+    const user = localStorage.getItem("user")
 
 
     //로그인 확인
-    const is_login = true;
-    // const [is_login, setIsLogin] = React.useState(false);
+    // const is_login = true;
+    const [is_login, setIsLogin] = React.useState(false);
 
-    // const loginCheck = async (user) => {
-    //     if (user) {
-    //         setIsLogin(true);
-    //     } else {
-    //         setIsLogin(false);
-    //     }
-    // }
+    const loginCheck = async (user) => {
+        if (user) {
+            setIsLogin(true);
+        } else {
+            setIsLogin(false);
+        }
+    }
 
     React.useEffect(() => {
-        // loginCheck(user);
-        LoadPostAxios();
+        loginCheck(user);
     })
 
     //Tag 검색
@@ -77,48 +78,54 @@ const Main = () => {
 
 
     //axios
-    const LoadPostAxios = async () => {
-        axios.defaults.withCredentials = true;
-        axios(
-            {
-                url: "/user/login",
-                method: "get",
-                baseURL: "http://52.78.217.50:8080",
-            }
-        )
-            .then(response => {
-                console.log(response);
-                // setList(response.data);
-            })
-            .catch((response) => { window.alert(response.response.data) });
-    }
- 
- 
+    // const LoadPostAxios = async () => {
+    //     axios.defaults.withCredentials = true;
+    //     axios(
+    //         {
+    //             url: "/post/all",
+    //             method: "GET",
+    //             baseURL: "http://52.78.217.50:8080",
+    //         }
+    //     )
+    //         .then(response => {
+    //             console.log(response.data);
+    //             // setList(response.data);
+    //         })
+    //         .catch((response) => {
+    //             if (!response) {
+    //                 window.alert("Error: Network Error");
+    //             } else {
+    //                 window.alert("요청실패")
+    //             }
+    //         });
+    // }
+
+
     //Tag 요청
-    const [tlist, setTlist] = React.useState([]);
-    const ByTag = (e) => {
-        e.preventDefault();
-        if (tlist === null || tlist === []) {
-            setTlist(post_list);
-        } else {
-            axios.defaults.withCredentials = true;
-            axios(
-                {
-                    url: "/user/login",
-                    method: "post",
-                    data: {
-                        "tag": e,
-                    },
-                    baseURL: "http://52.78.217.50:8080",
-                }
-            )
-                .then(response => {
-                    console.log(response);
-                    // setTlist(response.data);
-                })
-                .catch((response) => { window.alert(response.response.data) });
-        }
-    }
+    // const [tlist, setTlist] = React.useState([]);
+    // const ByTag = (e) => {
+    //     e.preventDefault();
+    //     if (tlist === null || tlist === []) {
+    //         setTlist(post_list);
+    //     } else {
+    //         axios.defaults.withCredentials = true;
+    //         axios(
+    //             {
+    //                 url: "/tag",
+    //                 method: "post",
+    //                 data: {
+    //                     "tag": e,
+    //                 },
+    //                 baseURL: "http://52.78.217.50:8080",
+    //             },
+    //         )
+    //             .then(response => {
+    //                 console.log(response);
+    //                 // setTlist(response.data);
+    //             })
+    //             .catch((response) => { window.alert(response.response.data) });
+    //     }
+    // }
 
 
 
@@ -144,7 +151,7 @@ const Main = () => {
                         {tag_lists.map((tags, idx) => {
                             return (
                                 <TagBtn key={idx}
-                                    // onClick={ByTag(tag_lists[idx])}
+                                // onClick={ByTag(tag_lists[idx])}
                                 >
                                     {tag_lists[idx]}
                                 </TagBtn>
@@ -154,9 +161,9 @@ const Main = () => {
                     <div style={{ marginRight: "10px" }}>
                         <FontAwesomeIcon icon="fa-circle-xmark" style={{ marginTop: "13px" }}
                             onClick={() => { setOpen(false) }}
-                        /><br/><br/>
+                        /><br /><br />
                         <FontAwesomeIcon icon="fa-arrow-rotate-left"
-                            // onClick={() => { setTlist(post_list) }}
+                        // onClick={() => { setTlist(post_list) }}
                         />
                     </div>
                 </TagsDiv>

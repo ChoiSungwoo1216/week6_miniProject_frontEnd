@@ -15,7 +15,7 @@ const Post = () => {
 
     const single_lists = useSelector((state) => state.single.list);
     const [post_info, setPost] = React.useState([]);
-  
+
     const navigate = useNavigate();
 
     const params = useParams();
@@ -72,7 +72,7 @@ const Post = () => {
     //     axios.defaults.withCredentials = true;
     //     axios(
     //         {
-    //             url: "/user/login",
+    //             url: "/post/comments",
     //             method: "post",
     //             data: {
     //                 "comment": com,
@@ -82,7 +82,7 @@ const Post = () => {
     //         {
     //             headers: {
     //                 "Authorization": localStorage.getItem("Authorization"),
-    //                 "Refreshtoken": localStorage.getItem("Refreshtoken")
+    //                 "RefreshToken": localStorage.getItem("RefreshToken")
     //             }
     //         }
     //     )
@@ -97,11 +97,11 @@ const Post = () => {
 
 
     //댓글 삭제
-        // const DelCmtAxios = async () => {
+    // const DelCmtAxios = async () => {
     //     axios.defaults.withCredentials = true;
     //     axios(
     //         {
-    //             url: "/user/login",
+    //             url: "/deleteComment",
     //             method: "delete",
     //             data: {
     //                 "comment": com,
@@ -132,7 +132,7 @@ const Post = () => {
                 <EDBtn>
                     <FontAwesomeIcon icon="fa-pen-to-square" color="white" size="2x"
                         onClick={() => {
-                            navigate("/postedit/" + post_id);
+                            navigate("/postedit/"+post_id);
                         }}
                     />
                     <FontAwesomeIcon icon="fa-trash-can" color="white" size="2x"
@@ -165,12 +165,12 @@ const Post = () => {
                                         <div style={{ margin: "5px" }}>{list.comment}</div>
                                         <h5 style={{ marginBottom: "0px", marginTop: "10px" }}>{list.user_nick} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {list.time}</h5>
                                     </Comment>
-                                        <FontAwesomeIcon icon="fa-trash-can" color="black"
-                                            onClick={() => {
-                                                // dispatch(deletepost({index}));
-                                                window.alert("삭제 완료");
-                                            }}
-                                        />
+                                    <FontAwesomeIcon icon="fa-trash-can" color="black"
+                                        onClick={() => {
+                                            // dispatch(deletepost({index}));
+                                            window.alert("삭제 완료");
+                                        }}
+                                    />
                                 </CommentDiv>
                             );
                         })
@@ -189,12 +189,12 @@ const Post = () => {
                                     }}
                                 />
                                 <CmtBtn>
-                                    <FontAwesomeIcon icon="fa-circle-check" color="white" size="2x" 
+                                    <FontAwesomeIcon icon="fa-circle-check" color="white" size="2x"
                                     // onClick={addCmtAxios}
                                     />
                                 </CmtBtn>
                             </Cmt>
-                        ): (null)}
+                        ) : (null)}
                         <FontAwesomeIcon icon="fa-comment-medical" color="white" size="3x"
                             onClick={addCmt}
                         />
