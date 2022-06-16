@@ -2,52 +2,57 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import axios from "axios";
-
-
-// import { addsingle } from "../redux/modules/single";
-// import { addpost } from "../redux/modules/post";
 
 import talking from "../Img/talking.PNG"
 
 const PostEdit = () => {
-    // const dispatch = useDispatch();
-    // const navigate = useNavigate();
-    //작성이 되었는지 확인
-
-    const single_lists = useSelector((state) => state.single.list);
-    const tagLists = useSelector((state) => state.single.tag);
-
-    const params = useParams();
     const navigate = useNavigate();
 
-    const post_id = params.postid;
+    //작성이 되었는지 확인
+
+    const post_lists = useSelector((state) => state.post.list);
+
+    const ListTag = useSelector((state) => state.tag.tag);
+
+    const params = useParams();
+
+
+    const post_id = params.id;
+
 
     function find_index(e) {
-        for (let i = 0; i < single_lists.length; i++) {
-            if (e === single_lists[i].postid) {
+        for (let i = 0; i < post_lists.length; i++) {
+            if (parseInt(e) === post_lists[i].id) {
                 return i;
             }
         }
     };
     const index = find_index(post_id);
 
-    const [title_check, setTitle] = React.useState("");
-    const [tag_check, setTag] = React.useState("");
+    console.log(index);
+    console.log(post_lists[index].tagList[0].tag)
+
+    const tl = post_lists[index].tagList.map((e, idx) => {
+        const tli = post_lists[index].tagList[idx].tag
+        return tli;
+    })
+    console.log(tl);
+
+    const [title_check, setTitle] = React.useState(post_lists[index].title);
 
 
-    const [up_txt, setUpTxt] = React.useState("")
-    const [down_txt, setDownTxt] = React.useState("")
+    const [up_txt, setUpTxt] = React.useState(post_lists[index].up_txt)
+    const [down_txt, setDownTxt] = React.useState(post_lists[index].down_txt)
 
     const up_txt_ref = React.useRef(null);
     const down_txt_ref = React.useRef(null);
     const title_ref = React.useRef(null);
-    const tag_ref = React.useRef(null);
 
-       // layer 선택
-    const [up_layer_value, setUpLayout] = React.useState(single_lists[index].up_text_value);
+    // layer 선택
+    const [up_layer_value, setUpLayout] = React.useState(post_lists[index].up_layer_value);
     const up_is_checked = (e) => {
         if (e.target.checked) {
             setUpLayout(e.target.value);
@@ -56,7 +61,7 @@ const PostEdit = () => {
         }
     };
 
-    const [down_layer_value, setDownLayout] = React.useState(single_lists[index].down_text_value);
+    const [down_layer_value, setDownLayout] = React.useState(post_lists[index].down_layer_value);
     const down_is_checked = (e) => {
         if (e.target.checked) {
             setDownLayout(e.target.value);
@@ -65,63 +70,66 @@ const PostEdit = () => {
         }
     };
 
-        //Tag 추가
-        const [newtag, setNewtag] = React.useState("");
-        const [tags, setTags] = React.useState(single_lists[index].tag);
-    
-        const onTag = (e) => {
-            e.preventDefault();
-            if (newtag !== null && newtag !== "") {
-                const taglist = [...tags, newtag];
-                setTags(taglist);
+    //Tag 추가
+    const [newtag, setNewtag] = React.useState("");
+    const [tags, setTags] = React.useState(tl);
+    console.log(tags);
+    const onTag = (e) => {
+        e.preventDefault();
+        if (newtag !== null && newtag !== "") {
+            const taglist = [...tags, newtag];
+            setTags(taglist);
+        }
+        setNewtag("")
+    }
+
+    const onChangeTag = (e) => {
+        e.preventDefault();
+        setNewtag(e.target.value);
+    }
+
+    const deleteTag = (e, idx) => {
+        e.preventDefault();
+        const deltag = tags.splice(idx, 1);
+        setNewtag(deltag);
+    }
+
+    //AXOIS
+    const EditPostAxios = async (dispatch) => {
+        axios.defaults.withCredentials = true;
+        axios(
+            {
+                url: "/updateMyPage",
+                method: "put",
+                data: {
+                    "id": post_id,
+                    "title": title_check,
+                    "tagList": tags,
+                    "up_layer_value": up_layer_value,
+                    "down_layer_value": down_layer_value,
+                    "up_txt": up_txt,
+                    "down_txt": down_txt,
+                },
+                baseURL: "http://52.78.217.50:8080",
+                headers: {
+                    "Authorization": localStorage.getItem("Authorization"),
+                    "RefreshToken": localStorage.getItem("RefreshToken")
+                }
             }
-            setNewtag("")
-        }
-    
-        const onChangeTag = (e) => {
-            e.preventDefault();
-            setNewtag(e.target.value);
-    
-        }
-    
-        const deleteTag = (e, idx) => {
-            e.preventDefault();
-            const deltag = tags.splice(idx, 1);
-            setNewtag(deltag);
-        }
-        //AXOIS
-        // const EditPostAxios = async () => {
-        //     axios.defaults.withCredentials = true;
-        //     axios(
-        //         {
-        //             url: "/updateMyPage/user_id",
-        //             method: "put",
-        //             data: {
-        //                 "title": title_check,
-        //                 "tag": tags,
-        //                 "up_layer_value": up_layer_value,
-        //                 "down_layer_value": down_layer_value,
-        //                 "up_txt": up_txt,
-        //                 "down_txt": down_txt,
-        //             },
-        //             baseURL: "http://52.78.217.50:8080",
-        //         },
-        //         {
-        //             headers: {
-        //                 "Authorization": localStorage.getItem("Authorization"),
-        //                 "RefreshToken": localStorage.getItem("RefreshToken")
-        //             }
-        //         }
-        //     )
-        //         .then(response => {
-        //             console.log(response);
-        //             window.alert(response.response.data);
-        //             navigate("/post/" + postid);
-        //         })
-        //         .catch((response) => {
-        //             window.alert(response.response.data)
-        //         })
-        // };
+        )
+            .then(response => {
+                console.log(response);
+                window.alert(response.data);
+                navigate("/");
+            })
+            .catch((response) => {
+                if (response.response.data.reLogin === true) {
+                    window.alert("다시 로그인 해주세요")
+                } else {
+                    window.alert(response.message)
+                }
+            })
+    };
 
     return (
         <CardStyle>
@@ -129,19 +137,20 @@ const PostEdit = () => {
                 <ImgTxtDiv>
                     <ImageDiv>
                         {(up_layer_value === "") ? (null) : (
-                            <Ballon>{single_lists[index].up_text_value}</Ballon>
+                            <Ballon>{up_txt}</Ballon>
                         )}
-                        <ImgInputed src={single_lists[index].img_url} style={{ marign: "0px", padding: "0px" }} />
+                        <ImgInputed src={post_lists[index].imgUrl} style={{ marign: "0px", padding: "0px" }} />
                         {(down_layer_value === "") ? (null) : (
-                            <Ballon>{single_lists[index].down_text_value}</Ballon>
+                            <Ballon>{down_txt}</Ballon>
                         )}
                     </ImageDiv>
                 </ImgTxtDiv>
                 <LayerDiv>
                     <TitleDiv >
-                        <h1 style={{ margin: "0px", color: "white" }}>제목 :</h1>
+                        <h1 style={{ margin: "0px", color: "white" }} >제목 :</h1>
                         <input type="text"
                             ref={title_ref}
+                            defaultValue={post_lists[index].title}
                             onChange={(e) => {
                                 setTitle(e.target.value);
                             }} placeholder="제목을 입력해주세요"
@@ -161,19 +170,15 @@ const PostEdit = () => {
                             }
                         </SelectTagDiv>
                         <TagForm onSubmit={(e) => onTag(e)}>
-                            {/* 인풋으로 태그 추가하는 법 
-                            <TagInput type="text" value={newtag} placeholder="태그를 입력하세요" onChange={onChangeTag} />
-                            <TagAddBtn type="submit">태그 추가</TagAddBtn> */}
-                            {/*Select로 추가하는 법*/}
                             <TagSelect type="text" value={newtag} onChange={onChangeTag}>
                                 <option value="" disabled hidden> Select a Tag </option>
-                                {tagLists.map((t, ix) => {
+                                {ListTag.map((t, ix) => {
                                     return (
                                         <option key={ix} value={t}>{t}</option>
                                     );
                                 })}
                             </TagSelect>
-  
+
                             <TagAddBtn type="submit" >태그추가</TagAddBtn>
                         </TagForm>
                     </TagDiv>
@@ -181,25 +186,25 @@ const PostEdit = () => {
                         <Ballon>말풍선 고르기</Ballon>
                         <div>
                             <div>
-                                <input type="checkbox" name="1" value="upText" onChange={up_is_checked} style={{ marginBottom: "10px" }} 
-                                checked={up_layer_value !== "" ? true : false}
+                                <input type="checkbox" name="1" value="upText" onChange={up_is_checked} style={{ marginBottom: "10px" }}
+                                    checked={up_layer_value !== "" ? true : false}
                                 /><strong>상단 말풍선</strong><br />
-                                <input type="text" ref={up_txt_ref} placeholder="짤태식이" onChange={(e) => { setUpTxt(e.target.value) }} style={{ height: "20px", textAlign: "center", marginBottom: "10px" }} />
+                                <input type="text" ref={up_txt_ref} placeholder="짤태식이" onChange={(e) => { setUpTxt(e.target.value) }} style={{ height: "20px", textAlign: "center", marginBottom: "10px" }}
+                                    defaultValue={post_lists[index].up_txt}
+                                />
                             </div>
                             <div>
-                                <input type="checkbox" name="2" value="downText" onChange={down_is_checked} style={{ marginBottom: "10px" }} 
-                                checked={down_layer_value !== "" ? true : false}
+                                <input type="checkbox" name="2" value="downText" onChange={down_is_checked} style={{ marginBottom: "10px" }}
+                                    checked={down_layer_value !== "" ? true : false}
                                 /><strong>하단 말풍선</strong><br />
-                                <input type="text" ref={down_txt_ref} placeholder="돌아왔구나" onChange={(e) => { setDownTxt(e.target.value) }} style={{ height: "20px", textAlign: "center", marginBottom: "10px" }} />
+                                <input type="text" ref={down_txt_ref} placeholder="돌아왔구나" onChange={(e) => { setDownTxt(e.target.value) }} style={{ height: "20px", textAlign: "center", marginBottom: "10px" }}
+                                    defaultValue={post_lists[index].down_txt}
+                                />
                             </div>
                         </div>
                     </BallonDiv>
                     <EditPostBtn
-                        disabled={
-                            title_check === "" || tags ===[]
-                                ? true : false
-                        }
-                        // onClick={EditPostAxios}
+                        onClick={EditPostAxios}
                     >수정 완료</EditPostBtn>
                 </LayerDiv>
             </CardInside>

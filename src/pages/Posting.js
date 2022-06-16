@@ -23,7 +23,7 @@ const Posting = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const tag_lists = useSelector((state) => state.single.tag);
+    const tag_lists = useSelector((state) => state.tag.tag);
 
     //작성이 되었는지 확인
     const [img_check, setImg] = React.useState(null);
@@ -101,8 +101,21 @@ const Posting = () => {
         )
             .then(response => {
                 // console.log(response);
+                // const user_info = localStorage.getItem("user")
+                // dispatch(addpost({
+                //     "title": title_check,
+                //     "imgUrl": img_check,
+                //     "tagList": tags,
+                //     "up_layer_value": up_layer_value,
+                //     "down_layer_value": down_layer_value,
+                //     "up_txt": up_txt,
+                //     "down_txt": down_txt,
+                //     "commentCnt": "0",
+                //     "nickname": "현재 유저"
+                // }
+                // ))
                 window.alert(response.data);
-                // navigate("/");
+                navigate("/");                
             })
             .catch((response) => {
                 console.log(response);

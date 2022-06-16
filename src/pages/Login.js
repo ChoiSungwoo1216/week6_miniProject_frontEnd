@@ -1,8 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-// import { auth } from "../shared/firebase";
-// import { signInWithEmailAndPassword } from "firebase/auth"
 
 import axios from "axios"
 import loginPic from "../Img/loginPic.png"
@@ -19,28 +17,9 @@ const Login = () => {
     const id_ref = React.useRef("");
     const password_ref = React.useRef("");
 
-    // const loginFB = async () => {
-    //     //에러가 뜨면 catch가 불려온다.
-    //     try {
-    //         const user = await signInWithEmailAndPassword(
-    //             auth,
-    //             id_ref.current.value,
-    //             password_ref.current.value
-    //         );
-    //         console.log(user);
-
-    //         if (user.operationType === "signIn") {
-    //             window.alert("환영합니다");
-    //             navigate("/");
-    //         }
-    //     } catch (e) {
-    //         window.alert("다시 시도해주세요");
-    //     }
-    // }
-
     //axios
     const loginAxios = async () => {
-        // login(id_check, pwd_check);
+
         axios.defaults.withCredentials = true;
         axios(
             {
@@ -57,7 +36,7 @@ const Login = () => {
                 localStorage.setItem("user", response.config.data);
                 localStorage.setItem("Authorization", response.headers.authorization);
                 localStorage.setItem("RefreshToken", response.headers.refreshtoken);
-
+                window.alert("로그인 완료");
                 navigate("/");
             })
             .catch((response) => {

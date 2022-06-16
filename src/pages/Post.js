@@ -1,34 +1,46 @@
 import React from "react";
 import styled from "styled-components"
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
-// import axios from "axios";
+import axios from "axios";
 
+import { loadsingle, addsingle } from "../redux/modules/single";
+
+
+
+//이미지
 import talking from "../Img/talking.PNG"
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-
 const Post = () => {
-
-    const single_lists = useSelector((state) => state.single.list);
-    const [post_info, setPost] = React.useState([]);
-
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const post_lists = useSelector((state) => state.post.list);
+    const comment_lists = useSelector((state) => state.single.list);
+
+    const [cmt_lists, setCmtList] = React.useState(comment_lists);
+    console.log(cmt_lists);
 
     const params = useParams();
-    const post_id = params.postid;
+    const post_id = params.id;
 
     function find_index(e) {
-        for (let i = 0; i < single_lists.length; i++) {
-            if (e === single_lists[i].postid) {
+        for (let i = 0; i < post_lists.length; i++) {
+            if (parseInt(e) === post_lists[i].id) {
                 return i;
             }
         }
     };
+
     const index = find_index(post_id);
+
+    const type = "help"
+
+    React.useEffect(() => {
+        dispatch(LoadCmtAxios(type));
+    }, [dispatch, type])
 
     //댓글
 
@@ -43,138 +55,200 @@ const Post = () => {
         }
     }
 
-    // const [like, setLike] = React.useState(false);
 
     //axios
 
-    //포스트 정보 불러오기
-    // const LoadInfoAxios = async () => {
-    //     axios.defaults.withCredentials = true;
-    //     axios(
-    //         {
-    //             url: "/user/login",
-    //             method: "get",
-    //             params: {
-    //                 id: post_id,
-    //             },
-    //             baseURL: "http://52.78.217.50:8080",
-    //         }
-    //     )
-    //         .then(response => {
-    //             console.log(response);
-    //             // setPost(response.data);
-    //         })
-    //         .catch((response) => { window.alert(response.response.data) });
-    // }
+    //게시글 삭제
+    const DelPostAxios = () => {
+        return async function () {
+            axios.defaults.withCredentials = true;
+            await axios(
+                {
+                    url: "/deleteMyPage/" + post_id,
+                    method: "delete",
+                    baseURL: "http://52.78.217.50:8080",
+                    headers: {
+                        "Authorization": localStorage.getItem("Authorization"),
+                        "Refreshtoken": localStorage.getItem("Refreshtoken")
+                    }
+                }
+            )
+                .then(response => {
+                    console.log(response);
+                    window.alert("삭제완료");
+                    navigate("/");
+                })
+                .catch((response) => {
+                    if (response.response.data.reLogin === true) {
+                        window.alert("다시 로그인 해주세요")
+                    } else {
+                        window.alert(response.message)
+                    }
+                })
+        }
+    }
 
-    //댓글 추가
-    // const addCmtAxios = async () => {
-    //     axios.defaults.withCredentials = true;
-    //     axios(
-    //         {
-    //             url: "/post/comments",
-    //             method: "post",
-    //             data: {
-    //                 "comment": com,
-    //             },
-    //             baseURL: "http://52.78.217.50:8080",
-    //         },
-    //         {
-    //             headers: {
-    //                 "Authorization": localStorage.getItem("Authorization"),
-    //                 "RefreshToken": localStorage.getItem("RefreshToken")
-    //             }
-    //         }
-    //     )
-    //         .then(response => {
-    //             console.log(response);
-    //             window.alert("작성완료");
-    //         })
-    //         .catch((response) => {
-    //             window.alert(response.response.data)
-    //         })
-    // }
+
+
+    //댓글 가져오기
+
+    const LoadCmtAxios = () => {
+        axios.defaults.withCredentials = true;
+        return async function (dispatch) {
+            await axios(
+                {
+                    url: "/post/getCommentsByPostId",
+                    method: "get",
+                    params: {
+                        "postId": post_id,
+                    },
+                    baseURL: "http://52.78.217.50:8080",
+                }
+            )
+                .then(response => {
+                    console.log(response)
+                    setCmtList(response.data)
+                    dispatch(loadsingle(response.data))
+
+                })
+                .catch((response) => {
+                    if (!response) {
+                        window.alert("Error: Network Error");
+                    } else {
+                        window.alert(response.message)
+                    }
+                });
+        }
+    }
+
+
+    //  댓글 추가
+    const addComAxios = async () => {
+        axios.defaults.withCredentials = true;
+        axios(
+            {
+                url: "/post/comments",
+                method: "post",
+                data: {
+                    "postId": post_id,
+                    "comment": com,
+                },
+                baseURL: "http://52.78.217.50:8080",
+                headers: {
+                    "Authorization": localStorage.getItem("Authorization"),
+                    "RefreshToken": localStorage.getItem("RefreshToken")
+                }
+            }
+        )
+            .then(response => {
+                console.log(response);
+                dispatch(addsingle({
+                    comment: com,
+                    nickname: localStorage.getItem("user").nickname,
+                }))
+                navigate("/");
+                window.alert(response.data);
+            })
+            .catch((response) => {
+                if (response.response.data.reLogin === true) {
+                    window.alert("다시 로그인 해주세요")
+                } else {
+                    window.alert(response.message)
+                }
+            })
+    }
 
 
     //댓글 삭제
-    // const DelCmtAxios = async () => {
-    //     axios.defaults.withCredentials = true;
-    //     axios(
-    //         {
-    //             url: "/deleteComment",
-    //             method: "delete",
-    //             data: {
-    //                 "comment": com,
-    //             },
-    //             baseURL: "http://52.78.217.50:8080",
-    //         },
-    //         {
-    //             headers: {
-    //                 "Authorization": localStorage.getItem("Authorization"),
-    //                 "Refreshtoken": localStorage.getItem("Refreshtoken")
-    //             }
-    //         }
-    //     )
-    //         .then(response => {
-    //             console.log(response);
-    //             window.alert("삭제완료");
-    //         })
-    //         .catch((response) => {
-    //             window.alert(response.response.data)
-    //         })
-    // }
+    const DelCmtAxios = (id) => {
+        return async function () {
+            axios.defaults.withCredentials = true;
+            console.log(id)
+            await axios(
+                {
+                    url: "/post/commentDelete",
+                    method: "post",
+                    data: {
+                        "postId": post_id,
+                        "commentId": id,
+                    },
+                    baseURL: "http://52.78.217.50:8080",
+                    headers: {
+                        "Authorization": localStorage.getItem("Authorization"),
+                        "Refreshtoken": localStorage.getItem("Refreshtoken")
+                    }
+                }
+            )
+                .then(response => {
+                    console.log(response);
+                    window.alert("삭제완료");
+                    navigate("/");
+                })
+                .catch((response) => {
+                    if (response.response.data.reLogin === true) {
+                        window.alert("다시 로그인 해주세요")
+                    } else {
+                        window.alert(response.message)
+                    }
+                })
+        }
+    };
+
 
 
     return (
         <CardStyleD>
             <Top>
-                <PostTitle>{single_lists[index].title}</PostTitle>
+                <PostTitle>{post_lists[index].title}</PostTitle>
                 <EDBtn>
                     <FontAwesomeIcon icon="fa-pen-to-square" color="white" size="2x"
                         onClick={() => {
-                            navigate("/postedit/"+post_id);
+                            navigate("/postedit/" + post_id);
                         }}
                     />
                     <FontAwesomeIcon icon="fa-trash-can" color="white" size="2x"
-                        onClick={() => {
-                            window.alert("삭제 완료");
-                        }}
+                        onClick={
+                            dispatch(DelPostAxios)
+                        }
                     />
                 </EDBtn>
             </Top>
             <Rowlayer>
                 <ImgTxtDiv>
-                    {(single_lists[index].up_text_layer === "") ? (null) : (
-                        <Ballon>{single_lists[index].up_text_value}</Ballon>
+                    {(post_lists[index].up_layer_value === "") ? (null) : (
+                        <Ballon>{post_lists[index].up_txt}</Ballon>
                     )}
-                    <ImgInputed src={single_lists[index].img_url} style={{ marign: "0px", padding: "0px" }} />
-                    {(single_lists[index].down_text_layer === "") ? (null) : (
-                        <Ballon>{single_lists[index].down_text_value}</Ballon>
+                    <ImgInputed src={post_lists[index].imgUrl} style={{ marign: "0px", padding: "0px" }} />
+                    {(post_lists[index].down_layer_value === "") ? (null) : (
+                        <Ballon>{post_lists[index].down_txt}</Ballon>
                     )}
                 </ImgTxtDiv>
                 <div>
                     <InfoTitle>
-                        <h5 style={{ fontStyle: " italic", color: "white", marginTop: "0px" }}>{single_lists[index].user_nick}님의 게시물 {single_lists[index].time}</h5>
+                        <h5 style={{ fontStyle: " italic", color: "white", marginTop: "0px" }}>{post_lists[index].nickname}님의 게시물</h5>
+                        <FontAwesomeIcon icon="fa-comment-dots" color="white" size="2x" />
                     </InfoTitle>
-
                     <TotalComment>
-                        {single_lists[index].comment_list.map((list, idx) => {
-                            return (
-                                <CommentDiv >
-                                    <Comment>
-                                        <div style={{ margin: "5px" }}>{list.comment}</div>
-                                        <h5 style={{ marginBottom: "0px", marginTop: "10px" }}>{list.user_nick} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {list.time}</h5>
-                                    </Comment>
-                                    <FontAwesomeIcon icon="fa-trash-can" color="black"
-                                        onClick={() => {
-                                            // dispatch(deletepost({index}));
-                                            window.alert("삭제 완료");
-                                        }}
-                                    />
-                                </CommentDiv>
-                            );
-                        })
-                        }
+                        {cmt_lists.length === 0 ? (
+                            <div style={{ color: "white", width: "100%", height: "100%" }}>No Comment</div>
+                        ) : (
+                            <div>
+                                {cmt_lists.map((list, idx) => {
+                                    // cmt_lists
+                                    return (
+                                        <CommentDiv key={idx} >
+                                            <Comment>
+                                                <div style={{ margin: "5px" }}>{list.content}</div>
+                                                <h5 style={{ marginBottom: "0px", marginTop: "10px" }}>{list.nickname}</h5>
+                                                <h5>{list.createdAt}</h5>
+                                            </Comment>
+                                            <FontAwesomeIcon icon="fa-trash-can" color="black" onClick={DelCmtAxios(cmt_lists[idx].id)} />
+                                        </CommentDiv>
+                                    );
+                                })
+                                }
+                            </div>
+                        )}
                     </TotalComment>
                     <AddCmt>
                         {checkCmt ? (
@@ -190,7 +264,7 @@ const Post = () => {
                                 />
                                 <CmtBtn>
                                     <FontAwesomeIcon icon="fa-circle-check" color="white" size="2x"
-                                    // onClick={addCmtAxios}
+                                        onClick={addComAxios}
                                     />
                                 </CmtBtn>
                             </Cmt>
@@ -199,27 +273,13 @@ const Post = () => {
                             onClick={addCmt}
                         />
                     </AddCmt>
-
-                    {/* 좋아요 표시 
-                    <div>
-                        {like ? (
-                            <div style={{display:"flex", flexDirection:"row"}}>
-                                <Like style={{ color: "red" }} onClick={() => { setLike(false) }}>
-                                    ❤
-                                </Like>
-                                <h3 style={{color:"white", margin:"0 auto", lineHeight:"65px"}}>{single_lists[index].liked}</h3>
-                            </div>
-                        ) : (
-                            <div style={{display:"flex", flexDirection:"row"}}>
-                                <Like onClick={() => { setLike(true) }}>
-                                    🤍
-                                </Like>
-                                <h1 style={{color:"white", margin:"0 auto", lineHeight:"65px"}}>{single_lists[index].liked}</h1>
-                            </div>
-                        )
-                        }
-                        <div style={{ color: "white" }}></div>
-                    </div> */}
+                    <TagDiv>
+                        {post_lists[index].tagList.map((t, i) => {
+                            return (
+                                <SmallTag key={i}>{post_lists[index].tagList[i].tag}</SmallTag>
+                            );
+                        })}
+                    </TagDiv>
                 </div>
             </Rowlayer>
             <ReturnBtn>
@@ -257,6 +317,26 @@ const CmtBtn = styled.div`
 margin: auto 10px;
 `;
 
+const TagDiv = styled.div`
+display:flex;
+flex-wrap: wrap;
+gap:10px;
+margin:0px auto;
+align-items: center;
+justify-content: center;
+`;
+
+const SmallTag = styled.div`
+background-color: orange;
+border: 1px solid black;
+border-radius: 5px;
+width: 119.3px;
+height: 30px;
+line-height: 30px;
+font-size: 20px;
+font-weight: 600;
+`;
+
 const Top = styled.div`
 display: flex;
 flex-direction: row;
@@ -278,7 +358,7 @@ margin: 0px auto;
 padding: 10px;
 border: 5px solid white;
 border-radius: 5px;
-overflow-y: auto;
+overflow-y: scroll;
 `;
 
 const CommentDiv = styled.div`
@@ -362,38 +442,34 @@ gap: 10px;
 margin: 0px auto;
 `;
 
-
-
-// const Like = styled.div`
-// width: 50px;
-// height: 50px;
-// font-size: 45px;
-// margin: 0px auto;
-
-// transition: transform 300ms ease-in-out;
-// &:hover {
-//   font-size: 50px;
-// }
-// `;
-
-// const Columnlayer = styled.div`
-// display: flex;
-// flex-direction: column;
-// align-items: center;
-// `;
-
-// const ColImg = styled.img`
-// width: 60vw;
-// height: 60vh;
-// object-fit: cover;
-// `;
-
-// const ColTxt = styled.div`
-// width: 60vw;
-// height: 20vh;
-// line-height: 20vh;
-// margin: 20px;
-// background-color: white;
-// `;
-
 export default Post;
+
+
+
+    // const addCmtRedux = () => {
+    //     dispatch(
+    //         editpost({
+    //             commentCnt: (parseInt(post_lists[index].commentCnt) + 1)
+    //         }, index))
+    //     dispatch(
+    //         addsingle(
+    //             {
+    //                 comment: com,
+    //                 nickname: "작성자"
+    //                 // localStorage.getItem("user").nickname
+    //                 ,
+    //             })
+    //     );
+    // };
+
+    // const delCmtRedux = (idx) => {
+    //     dispatch(
+    //         editpost({ "commentCnt": (post_lists[index].commentCnt - 1) }, index));
+    //     dispatch(
+    //         deletesingle({ idx })
+    //     );
+    //     window.alert("삭제 완료");
+    // }
+
+
+    // const [like, setLike] = React.useState(false);

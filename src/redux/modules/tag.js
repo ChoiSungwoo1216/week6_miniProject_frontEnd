@@ -3,30 +3,30 @@
 // import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy} from "firebase/firestore";
 
 // Actions
-const LOAD = "single/LOAD";
-const ADD = "single/ADD";
-const EDIT = "single/EDIT";
-const DELETE = "single/DELETE";
+const LOAD = "tag/LOAD";
+const ADD = "tag/ADD";
+const EDIT = "tag/EDIT";
+const DELETE = "tag/DELETE";
 
 const initialState = {
-    list:[],
+  tag: ["머머리", "럭키짱", "영화", "축구", "이런태그", "달고있는", "나는정말", "이게먼지", "모르겠다", "이게맞나"],
 };
 
 // Action Creators
-export function loadsingle(single_list) {
-    return { type: LOAD, single_list };
+export function loadtag(tag_list) {
+    return { type: LOAD, tag_list };
 }
 
-export function addsingle(single) {
-    return { type: ADD, single: single };
+export function addtag(tag) {
+    return { type: ADD, tag: tag };
 }
 
-export function editsingle(single, single_index) {
-    return { type: EDIT, single, single_index };
+export function edittag(tag, tag_index) {
+    return { type: EDIT, tag, tag_index };
 }
 
-export function deletesingle(single_index) {
-    return { type: DELETE, single_index };
+export function deletetag(tag_index) {
+    return { type: DELETE, tag_index };
 }
 
 // // middlewares
@@ -88,30 +88,30 @@ export function deletesingle(single_index) {
 // Reducer
 export default function reducer(state = initialState, action = {}) {
     switch (action.type) {
-        case "single/LOAD": {
-            return { list: action.single_list };
+        case "tag/LOAD": {
+            return { list: action.tag_list };
         }
 
-        case "single/ADD": {
-            const new_single_list = [action.single, ...state.list];
-            return { list: new_single_list };
+        case "tag/ADD": {
+            const new_tag_list = [action.tag, ...state.list];
+            return { list: new_tag_list };
         }
 
-        // case "post/EDIT": {
-        //     const edit_single_list = state.list.map((single, idx) => {
-        //         return Number(action.single_index) === idx
-        //             ? { ...single, ...action.single }
-        //             : single;
-        //     });
-        //     return { ...state, list: edit_single_list };
-        // }
+        case "post/EDIT": {
+            const edit_tag_list = state.list.map((tag, idx) => {
+                return Number(action.tag_index) === idx
+                    ? { ...tag, ...action.tag }
+                    : tag;
+            });
+            return { ...state, list: edit_tag_list };
+        }
 
-        case "single/DELETE": {
-            const new_single_list = state.list.filter((l, idx) => {
-                return parseInt(action.single_index) !== idx;
+        case "post/DELETE": {
+            const new_tag_list = state.list.filter((l, idx) => {
+                return parseInt(action.tag_index) !== idx;
             });
 
-            return { list: new_single_list };
+            return { list: new_tag_list };
         }
 
         default:

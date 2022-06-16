@@ -37,7 +37,9 @@ const Header = () => {
     return (
         <HeaderContainer>
             <HomeBtn>
-                <FontAwesomeIcon icon="fa-house" size="2x" onClick={() => { navigate("/") }} />
+                <FontAwesomeIcon icon="fa-house" size="2x" onClick={() => {
+                    // window.location.reload();
+                    navigate("/") }} />
             </HomeBtn>
             <Title>짤태식이 돌아왔구나?!</Title>
             <Gunma src={gunma} />

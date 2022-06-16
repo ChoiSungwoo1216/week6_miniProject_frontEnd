@@ -1,7 +1,7 @@
 import './App.css';
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 //pages
 import Header from "./pages/Header"
@@ -30,10 +30,10 @@ function App() {
 
   const dispatch = useDispatch();
 
-  React.useEffect( () => {
-    dispatch(LoadPostAxios());
-  });
-
+  React.useEffect(() => {
+      dispatch(LoadPostAxios());
+  })
+ 
   return (
     <div className="App">
       <Header />
@@ -42,8 +42,8 @@ function App() {
         <Route path="/login" element={<Login />}></Route>
         <Route path="/signup" element={<SignUp />}></Route>
         <Route path="/posting" element={<Posting />}></Route>
-        <Route path="/post/:postid" element={<Post />}></Route>
-        <Route path="/postedit/:postid" element={<PostEdit />}></Route>
+        <Route path="/post/:id" element={<Post />}></Route>
+        <Route path="/postedit/:id" element={<PostEdit />}></Route>
       </Routes>
     </div>
   );

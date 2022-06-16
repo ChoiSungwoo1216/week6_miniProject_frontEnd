@@ -11,11 +11,18 @@ const DELETE = "post/DELETE";
 
 const initialState = {
   list: [
-    { postid: "number1", img_url: "이미지1", tag: ["머머리", "럭키짱", "영화", "축구", "이런태그", "달고있는", "나는정말", "이게먼지", "모르겠다"], user_nick: "김성모", comment_cnt: "3", time: "2022-06-11 00:00", title: "제목 12" },
-    { postid: "number2", img_url: "이미지2", tag: ["영화", "축구"], user_nick: "김성모", comment_cnt: "4", time: "2022-06-11 00:01", title: "제목 23" },
-    { postid: "number3", img_url: "이미지3", tag: ["이런태그", "달고있는"], user_nick: "김성모", comment_cnt: "5", time: "2022-06-11 00:02", title: "제목 34" },
-    { postid: "number4", img_url: "이미지4", tag: ["나는정말", "이게먼지"], user_nick: "김성모", comment_cnt: "6", time: "2022-06-11 00:03", title: "제목 45" },
-    { postid: "number5", img_url: "이미지5", tag: ["모르겠다", "머머리"], user_nick: "김성모", comment_cnt: "7", time: "2022-06-11 00:04", title: "제목 50" },
+    //   {
+    //                   id: 100,
+    //                   title: "제목",
+    //                   imgUrl: "img_check",
+    //                   tagList: [{id:0, tag:"머머리"}, {id:1, tag:"럭키짱"}],
+    //                   up_layer_value: "upText",
+    //                   down_layer_value: "downText",
+    //                   up_txt: "up_txt",
+    //                   down_txt: "down_txt",
+    //                   commentCnt: "0",
+    //                   nickname: "현재 유저"
+    // }
   ],
 };
 
@@ -49,20 +56,13 @@ export const LoadPostAxios = () => {
       }
     )
       .then(response => {
-        let post_list = [];
-        response.data.forEach((b) => {
-          post_list.push({ id: b.id, ...b.data() });
-        });
+        const axios_data = response.data;
+        let post_list = [...axios_data];
         dispatch(loadpost(post_list));
       })
       .catch((response) => {
-        if (!response) {
-            window.alert("Error: Network Error");
-        } else {
-          console.log(response);
-            window.alert(response.message)
-        }
-    });
+        window.alert(response.message)
+      });
   }
 }
 
